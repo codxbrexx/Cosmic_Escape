@@ -53,8 +53,8 @@ export class GameManager {
             // Reset keys handled by touch
             this.keys['ArrowLeft'] = false;
             this.keys['ArrowRight'] = false;
-            this.keys['KeyF'] = false; // Auto-fire check resetting
-            this.keys['ArrowUp'] = false; // Prepare for 2-finger thrust
+            this.keys['KeyF'] = false;
+            this.keys['ArrowUp'] = false;
 
             // Analyze all active touches
             for (let i = 0; i < e.touches.length; i++) {
@@ -63,10 +63,9 @@ export class GameManager {
                 const x = touch.clientX - rect.left;
                 const width = rect.width;
 
-                // Auto-Fire on ANY touch (simplifies controls)
-                // Auto-Fire and Thrust (Space) on ANY touch (simplifies controls)
+                // FULL SCREEN TOUCH = UP (THRUST) + FIRE
                 this.keys['KeyF'] = true;
-                this.keys['ArrowUp'] = true; // Tap to Fly
+                this.keys['ArrowUp'] = true;
 
                 // Zone Logic for Steering
                 if (x < width * 0.5) {
@@ -75,11 +74,6 @@ export class GameManager {
                     this.keys['ArrowRight'] = true;
                 }
             }
-
-            // Two-Finger Thrust (Tap anywhere with 2 fingers to fly)
-            if (e.touches.length >= 2) {
-                this.keys['ArrowUp'] = true;
-            }
         };
 
         gameContainer.addEventListener('touchstart', handleTouch, { passive: false });
@@ -87,7 +81,7 @@ export class GameManager {
 
         const handleTouchEnd = (e) => {
             e.preventDefault();
-            // If no touches, stop turning
+            // If no touches remain, reset all mobile keys
             if (e.touches.length === 0) {
                 this.keys['ArrowLeft'] = false;
                 this.keys['ArrowRight'] = false;
@@ -107,6 +101,10 @@ export class GameManager {
         const pauseBtn = document.getElementById('mobile-pause-btn');
         if (pauseBtn) {
             const stopProp = (e) => { e.stopPropagation(); };
+            pauseBtn.addEventListener('click', (e) => {
+                e.preventDefault(); e.stopPropagation();
+                this.togglePause();
+            });
             pauseBtn.addEventListener('touchstart', (e) => {
                 e.preventDefault(); e.stopPropagation();
                 this.togglePause();
@@ -115,47 +113,27 @@ export class GameManager {
             pauseBtn.addEventListener('touchend', stopProp, { passive: false });
         }
 
-        // Thrust Button (if present)
+        // Thrust Button (Optional override / visual feedback)
         const btnThrust = document.getElementById('btn-thrust');
         if (btnThrust) {
+            const stopProp = (e) => { e.preventDefault(); e.stopPropagation(); };
+
             btnThrust.addEventListener('touchstart', (e) => {
                 e.preventDefault(); e.stopPropagation();
                 this.keys['ArrowUp'] = true;
                 btnThrust.classList.add('bg-white/30');
             });
 
-            // Critical: Stop move events from bubbling to gameContainer and resetting keys
-            btnThrust.addEventListener('touchmove', (e) => {
-                e.preventDefault(); e.stopPropagation();
-            }, { passive: false });
+            // Isolate from global handler
+            btnThrust.addEventListener('touchmove', stopProp, { passive: false });
 
             const endThrust = (e) => {
-                e.preventDefault(); e.stopPropagation(); // Stop bubbling
+                e.preventDefault(); e.stopPropagation();
                 this.keys['ArrowUp'] = false;
                 btnThrust.classList.remove('bg-white/30');
             };
             btnThrust.addEventListener('touchend', endThrust, { passive: false });
             btnThrust.addEventListener('touchcancel', endThrust, { passive: false });
-        }
-
-        // Fire Button (if present)
-        const btnFire = document.getElementById('btn-fire');
-        if (btnFire) {
-            btnFire.addEventListener('touchstart', (e) => {
-                e.preventDefault(); e.stopPropagation();
-                this.keys['KeyF'] = true;
-                btnFire.classList.add('bg-white/30');
-            });
-            btnFire.addEventListener('touchmove', (e) => {
-                e.preventDefault(); e.stopPropagation();
-            }, { passive: false });
-            const endFire = (e) => {
-                e.preventDefault(); e.stopPropagation();
-                this.keys['KeyF'] = false;
-                btnFire.classList.remove('bg-white/30');
-            };
-            btnFire.addEventListener('touchend', endFire, { passive: false });
-            btnFire.addEventListener('touchcancel', endFire, { passive: false });
         }
     }
 
