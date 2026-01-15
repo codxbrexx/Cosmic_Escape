@@ -44,52 +44,103 @@ export class GameManager {
     }
 
     setupMobileControls() {
+        const gameContainer = document.getElementById('game-container');
+
+        // Touch Handlers for the entire game area
+        const handleTouch = (e) => {
+            e.preventDefault(); // Prevent scrolling
+
+            // Reset keys handled by touch
+            this.keys['ArrowLeft'] = false;
+            this.keys['ArrowRight'] = false;
+            this.keys['KeyF'] = false; // Auto-fire check resetting
+            this.keys['ArrowUp'] = false; // Prepare for 2-finger thrust
+
+            // Analyze all active touches
+            for (let i = 0; i < e.touches.length; i++) {
+                const touch = e.touches[i];
+                const rect = gameContainer.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const width = rect.width;
+
+                // Auto-Fire on ANY touch (simplifies controls)
+                this.keys['KeyF'] = true;
+
+                // Zone Logic for Steering
+                if (x < width * 0.5) {
+                    this.keys['ArrowLeft'] = true;
+                } else {
+                    this.keys['ArrowRight'] = true;
+                }
+            }
+
+            // Two-Finger Thrust (Tap anywhere with 2 fingers to fly)
+            if (e.touches.length >= 2) {
+                this.keys['ArrowUp'] = true;
+            }
+        };
+
+        gameContainer.addEventListener('touchstart', handleTouch, { passive: false });
+        gameContainer.addEventListener('touchmove', handleTouch, { passive: false });
+
+        const handleTouchEnd = (e) => {
+            e.preventDefault();
+            // If no touches, stop turning
+            if (e.touches.length === 0) {
+                this.keys['ArrowLeft'] = false;
+                this.keys['ArrowRight'] = false;
+            } else {
+                // Re-evaluate remaining touches
+                handleTouch(e);
+            }
+        };
+        gameContainer.addEventListener('touchend', handleTouchEnd, { passive: false });
+        gameContainer.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+
+        // Keep specific listeners for the remaining UI buttons (Thrust/Pause)
         // Pause Button
         const pauseBtn = document.getElementById('mobile-pause-btn');
-        if (pauseBtn) { // Safety check
-            pauseBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.togglePause();
-            });
+        if (pauseBtn) {
             pauseBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 this.togglePause();
             });
         }
 
-        // Helper to bind touch to keys
-        const bindTouch = (btnId, keyCode) => {
-            const btn = document.getElementById(btnId);
-            if (!btn) return;
-
-            const handleStart = (e) => {
+        // Thrust Button (if present)
+        const btnThrust = document.getElementById('btn-thrust');
+        if (btnThrust) {
+            btnThrust.addEventListener('touchstart', (e) => {
+                e.preventDefault(); e.stopPropagation();
+                this.keys['ArrowUp'] = true;
+                btnThrust.classList.add('bg-white/30');
+            });
+            const endThrust = (e) => {
                 e.preventDefault();
-                this.keys[keyCode] = true;
-                btn.classList.add('bg-white/30'); // Visual feedback
+                this.keys['ArrowUp'] = false;
+                btnThrust.classList.remove('bg-white/30');
             };
+            btnThrust.addEventListener('touchend', endThrust);
+            btnThrust.addEventListener('touchcancel', endThrust);
+        }
 
-            const handleEnd = (e) => {
+        // Fire Button (if present)
+        const btnFire = document.getElementById('btn-fire');
+        if (btnFire) {
+            btnFire.addEventListener('touchstart', (e) => {
+                e.preventDefault(); e.stopPropagation();
+                this.keys['KeyF'] = true;
+                btnFire.classList.add('bg-white/30');
+            });
+            const endFire = (e) => {
                 e.preventDefault();
-                this.keys[keyCode] = false;
-                btn.classList.remove('bg-white/30');
+                this.keys['KeyF'] = false;
+                btnFire.classList.remove('bg-white/30');
             };
-
-            btn.addEventListener('touchstart', handleStart, { passive: false });
-            btn.addEventListener('touchend', handleEnd, { passive: false });
-            btn.addEventListener('touchcancel', handleEnd, { passive: false });
-
-            // Mouse fallbacks for testing
-            btn.addEventListener('mousedown', (e) => { this.keys[keyCode] = true; });
-            btn.addEventListener('mouseup', (e) => { this.keys[keyCode] = false; });
-            btn.addEventListener('mouseleave', (e) => { this.keys[keyCode] = false; });
-        };
-
-        bindTouch('btn-left', 'ArrowLeft');
-        bindTouch('btn-right', 'ArrowRight');
-        bindTouch('btn-thrust', 'ArrowUp');
-        bindTouch('btn-fire', 'KeyF');
+            btnFire.addEventListener('touchend', endFire);
+            btnFire.addEventListener('touchcancel', endFire);
+        }
     }
 
     togglePause() {

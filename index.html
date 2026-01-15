@@ -11,7 +11,7 @@
 <body
     class="min-h-screen flex flex-col justify-center items-center text-cosmic-text font-press-start select-none m-0 p-0 overflow-hidden bg-black touch-none">
     <div id="game-container"
-        class="relative w-[1200px] h-[600px] max-w-full  border-4 border-white overflow-hidden transition-colors duration-500">
+        class="relative w-[1200px] h-[700px] max-w-full  border-4 border-white overflow-hidden transition-colors duration-500">
         <!-- Start Menu -->
         <div id="start-menu"
             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] md:w-[600px] h-auto flex flex-col justify-center items-center text-center z-30 py-8">
@@ -144,47 +144,21 @@
             </div>
         </div>
 
-        <!-- Mobile Controls -->
-        <button id="mobile-pause-btn"
-            class="absolute top-4 right-4 z-40 md:hidden w-12 h-12 flex items-center justify-center bg-black border border-white text-white rounded-full active:bg-white active:text-black touch-none">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
-            </svg>
-        </button>
+
 
         <div id="mobile-controls"
             class="absolute bottom-6 left-0 w-full px-6 flex justify-between items-end z-40 md:hidden pointer-events-none pb-safe">
             <!-- D-Pad -->
             <div class="flex gap-6 pointer-events-auto">
-                <button id="btn-left"
-                    class="w-20 h-20 bg-black/80 border-2 border-white rounded-full flex items-center justify-center text-white active:bg-white active:text-black backdrop-blur-sm touch-none select-none transition-transform active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                        stroke="currentColor" class="w-10 h-10">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                <!-- Mobile Controls -->
+                <button id="mobile-pause-btn"
+                    class="absolute top-4 right-4 z-40 md:hidden w-12 h-12 flex items-center justify-center bg-black border border-white text-white rounded-full active:bg-white active:text-black touch-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
                     </svg>
                 </button>
-                <button id="btn-right"
-                    class="w-20 h-20 bg-black/80 border-2 border-white rounded-full flex items-center justify-center text-white active:bg-white active:text-black backdrop-blur-sm touch-none select-none transition-transform active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                        stroke="currentColor" class="w-10 h-10">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </button>
-            </div>
 
-            <!-- Action Buttons -->
-            <div class="flex gap-6 pointer-events-auto">
-                <button id="btn-fire"
-                    class="w-20 h-20 bg-black/80 border-2 border-white rounded-full flex flex-col items-center justify-center text-white active:bg-white active:text-black backdrop-blur-sm touch-none select-none transition-transform active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                        stroke="currentColor" class="w-8 h-8 mb-1">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1.001A3.75 3.75 0 0012 18z" />
-                    </svg>
-                </button>
                 <button id="btn-thrust"
                     class="w-20 h-20 bg-black/80 border-2 border-white rounded-full flex flex-col items-center justify-center text-white active:bg-white active:text-black backdrop-blur-sm touch-none select-none transition-transform active:scale-95">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
