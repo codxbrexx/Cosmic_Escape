@@ -17,7 +17,7 @@ export class Ship {
     update(particles, frameCount, invulnerableTimer, loseLifeCallback, createExplosionCallback) {
         // Physics
         if (this.thrusting) {
-            this.vy += THRUST_FORCE * 0.1; // Gradual thrust
+            this.vy += THRUST_FORCE * 0.15; // Increased thrust for mobile responsiveness
             // Emit trail particles
             if (frameCount % 3 === 0) {
                 particles.push(new Particle(this.x, this.y + this.height - 10, COLOR_ENGINE, 4, 3));
@@ -28,7 +28,7 @@ export class Ship {
 
         // Cap speed
         if (this.vy > 8) this.vy = 8;
-        if (this.vy < -6) this.vy = -6;
+        if (this.vy < -8) this.vy = -8; // Increased max upward speed
 
         this.y += this.vy;
 
