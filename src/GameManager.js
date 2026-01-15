@@ -64,7 +64,9 @@ export class GameManager {
                 const width = rect.width;
 
                 // Auto-Fire on ANY touch (simplifies controls)
+                // Auto-Fire and Thrust (Space) on ANY touch (simplifies controls)
                 this.keys['KeyF'] = true;
+                this.keys['ArrowUp'] = true; // Tap to Fly
 
                 // Zone Logic for Steering
                 if (x < width * 0.5) {
@@ -89,6 +91,8 @@ export class GameManager {
             if (e.touches.length === 0) {
                 this.keys['ArrowLeft'] = false;
                 this.keys['ArrowRight'] = false;
+                this.keys['ArrowUp'] = false;
+                this.keys['KeyF'] = false;
             } else {
                 // Re-evaluate remaining touches
                 handleTouch(e);
