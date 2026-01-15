@@ -1,0 +1,274 @@
+:root {
+    --bg-color: #000000;
+    /* Deep Cosmic Blue */
+    --text-color: #00FFCC;
+    /* Cyan/Neon */
+    --accent-color: #FF00FF;
+    /* Magenta */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /* Stack game and instructions */
+    justify-content: center;
+    align-items: center;
+    background-color: #01020f;
+    font-family: 'Press Start 2P', cursive;
+    /* overflow: hidden; Removed to allow scrolling if needed */
+    user-select: none;
+}
+
+#game-container {
+    position: relative;
+    width: 1200px;
+    height: 600px;
+    background: linear-gradient(to bottom, #000000 0%, #1a1a2e 100%);
+    /* Deep space */
+    border: 4px solid var(--text-color);
+    box-shadow: 0 0 40px rgba(0, 255, 204, 0.2);
+    overflow: hidden;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Simple UI */
+.glass-panel {
+    /* Keeping the class name to avoid HTML edits, but simplifying the style */
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #333;
+    border-radius: 4px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+}
+
+#hud-top.glass-panel {
+    background: transparent;
+    border: none;
+}
+
+#cheat-code {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: var(--text-color);
+    font-size: 10px;
+    opacity: 0.5;
+    z-index: 5;
+    pointer-events: none;
+    text-shadow: 0 0 5px var(--text-color);
+}
+
+#instructions {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin-top: 20px;
+    padding: 15px;
+    color: var(--text-color);
+    font-size: 14px;
+    line-height: 1.6;
+    z-index: 10;
+    pointer-events: none;
+    text-align: center;
+    width: auto;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #333;
+    border-radius: 8px;
+}
+
+#instructions p {
+    margin-bottom: 5px;
+    color: #00FFCC;
+    /* Use accent color for header */
+}
+
+#hud-top {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+#hud-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#hearts {
+    font-size: 24px;
+    filter: drop-shadow(0 0 5px #FF0000);
+}
+
+#coin-display {
+    font-size: 16px;
+    color: #FFD700;
+    text-shadow: 0 0 5px #FFD700;
+}
+
+#score-container {
+    text-align: right;
+}
+
+#score {
+    color: var(--text-color);
+    font-size: 28px;
+    text-shadow: 0 0 10px var(--text-color);
+    font-weight: bold;
+}
+
+#level-display {
+    color: #FFF;
+    font-size: 14px;
+    margin-bottom: 5px;
+    text-shadow: 0 0 5px #FFF;
+    letter-spacing: 2px;
+}
+
+#high-score {
+    color: var(--accent-color);
+    font-size: 12px;
+    margin-bottom: 5px;
+    text-shadow: 0 0 5px var(--accent-color);
+}
+
+#game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #FFF;
+    z-index: 20;
+    padding: 40px;
+    width: 300px;
+}
+
+#game-over p {
+    font-size: 16px;
+    margin: 10px 0;
+    color: #CCC;
+}
+
+#game-over span {
+    color: #00FFCC;
+    font-weight: bold;
+}
+
+/* Start Menu Styling */
+#start-menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 300px;
+    /* Overriding default full screen logic for a window/card feel */
+    background-color: rgba(0, 0, 0, 0.85);
+    /* Fallback */
+    background: rgba(11, 16, 38, 0.8);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 30;
+}
+
+#start-menu .title {
+    font-size: 48px;
+    line-height: 1.2;
+    margin: 0 0 20px 0;
+    color: #00FFCC;
+    text-shadow: 0 0 15px #00FFCC, 2px 2px 0px #FF00FF;
+    letter-spacing: 2px;
+    animation: float 3s ease-in-out infinite;
+}
+
+#start-menu .subtitle {
+    font-size: 14px;
+    color: #FFF;
+    margin-bottom: 40px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px #FFF;
+}
+
+button {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    padding: 15px 30px;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.1), transparent);
+    color: #00FFCC;
+    border: 1px solid #00FFCC;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #00FFCC;
+    color: #000;
+    box-shadow: 0 0 25px #00FFCC;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.small {
+    font-size: 12px;
+    margin-top: 10px;
+    color: #FFF;
+}
+
+/* Animations */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    50%,
+    100% {
+        opacity: 1;
+    }
+
+    25%,
+    75% {
+        opacity: 0.9;
+    }
+}

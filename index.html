@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Escape: Infinite Void</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="game-container">
+        <!-- Start Menu -->
+        <div id="start-menu">
+            <h1 class="title">COSMIC<br>ESCAPE</h1>
+            <p class="subtitle">CHOOSE YOUR PATH</p>
+
+            <button id="btn-classic" class="mode-btn">
+                CLASSIC ARCADE
+                <span class="desc">Dodge. Survive. High Score.</span>
+            </button>
+
+            <button id="btn-story" class="mode-btn">
+                STORY CAMPAIGN
+                <span class="desc">Levels. Bosses. Upgrades.</span>
+            </button>
+        </div>
+
+        <div id="hud-top" class="glass-panel">
+            <div id="hud-left">
+                <div id="hearts">❤️❤️❤️</div>
+                <div id="coin-display">🪙 <span id="coin-count">0</span></div>
+            </div>
+            <div id="score-container">
+                <div id="level-display">LEVEL 1</div>
+                <div id="high-score">HI: 00000</div>
+                <div id="score">00000</div>
+            </div>
+        </div>
+
+        <div id="game-over" class="glass-panel hidden">
+            <h2 style="color: #FF4444; margin: 0 0 10px 0;">CRITICAL FAILURE</h2>
+            <p>SCORE: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="mode-btn" style="width: auto;">RETRY</button>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <p id="cheat-code">Hyperdrive: ↑ ↑ ↓ ↓ ← → ← → B A</p>
+    </div>
+
+    <div id="instructions" class="glass-panel hidden">
+        <p><strong>MISSION CONTROL</strong></p>
+        Select a Mode to begin.
+    </div>
+
+    <!-- Main Module Entry -->
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
