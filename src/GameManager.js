@@ -48,7 +48,10 @@ export class GameManager {
 
         // Touch Handlers for the entire game area
         const handleTouch = (e) => {
-            e.preventDefault(); // Prevent scrolling
+            // Only handle game inputs if the game is actually running
+            if (!this.isRunning) return;
+
+            e.preventDefault(); // Prevent scrolling only during gameplay
 
             // Reset keys handled by touch
             this.keys['ArrowLeft'] = false;
@@ -80,6 +83,8 @@ export class GameManager {
         gameContainer.addEventListener('touchmove', handleTouch, { passive: false });
 
         const handleTouchEnd = (e) => {
+            if (!this.isRunning) return;
+
             e.preventDefault();
             // If no touches remain, reset all mobile keys
             if (e.touches.length === 0) {
