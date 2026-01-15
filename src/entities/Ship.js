@@ -17,8 +17,7 @@ export class Ship {
     update(particles, frameCount, invulnerableTimer, loseLifeCallback, createExplosionCallback) {
         // Physics
         if (this.thrusting) {
-            this.vy += THRUST_FORCE * 0.15; // Gradual thrust
-            // Emit trail particles
+            this.vy += THRUST_FORCE * 0.10; // sensitivity of thrust
             if (frameCount % 3 === 0) {
                 particles.push(new Particle(this.x, this.y + this.height - 10, COLOR_ENGINE, 4, 3));
             }

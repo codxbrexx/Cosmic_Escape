@@ -70,12 +70,6 @@ export class GameManager {
                 this.keys['KeyF'] = true;
                 this.keys['ArrowUp'] = true;
 
-                // Zone Logic for Steering
-                if (x < width * 0.5) {
-                    this.keys['ArrowLeft'] = true;
-                } else {
-                    this.keys['ArrowRight'] = true;
-                }
             }
         };
 
