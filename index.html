@@ -11,7 +11,7 @@
 <body
     class="min-h-screen flex flex-col justify-center items-center text-cosmic-text font-press-start select-none m-0 p-0 overflow-hidden bg-black touch-none">
     <div id="game-container"
-        class="relative w-[1200px] h-[800px] max-w-full  border-4 border-cosmic-accent overflow-hidden transition-colors duration-500">
+        class="relative w-[1200px] h-[800px] max-w-full  border-4 border-white overflow-hidden transition-colors duration-500">
         <!-- Start Menu -->
         <div id="start-menu"
             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] md:w-[600px] h-auto flex flex-col justify-center items-center text-center z-30 py-8">
@@ -21,15 +21,15 @@
                 CHOOSE YOUR PATH</p>
 
             <button id="btn-classic"
-                class="mode-btn group font-press-start text-sm md:text-base w-full max-w-[320px] px-6 md:px-[40px] py-5 md:py-[20px] bg-cosmic-bg text-cosmic-text border-2 border-cosmic-accent shadow-none cursor-pointer transition-all duration-100 uppercase mt-2.5 hover:bg-cosmic-accent hover:text-cosmic-bg active:bg-cosmic-accent/50">
+                class="mode-btn group font-press-start text-sm md:text-base w-full max-w-[320px] px-6 md:px-[40px] py-5 md:py-[20px] bg-black text-white border-2 border-white shadow-none cursor-pointer transition-all duration-100 uppercase mt-2.5 hover:bg-white hover:text-black active:bg-gray-300">
                 CLASSIC ARCADE
             </button>
             <button id="btn-story"
-                class="mode-btn group font-press-start text-sm md:text-base w-full max-w-[320px] px-6 md:px-[40px] py-5 md:py-[20px] bg-cosmic-bg text-cosmic-text border-2 border-cosmic-accent shadow-none cursor-pointer transition-all duration-100 uppercase mt-2.5 hover:bg-cosmic-accent hover:text-cosmic-bg active:bg-cosmic-accent/50">
+                class="mode-btn group font-press-start text-sm md:text-base w-full max-w-[320px] px-6 md:px-[40px] py-5 md:py-[20px] bg-black text-white border-2 border-white shadow-none cursor-pointer transition-all duration-100 uppercase mt-2.5 hover:bg-white hover:text-black active:bg-gray-300">
                 GALACTIC ODYSSEY
             </button>
             <button id="btn-about"
-                class="mode-btn font-press-start px-[18px] py-[12px] bg-cosmic-bg text-cosmic-text border border-cosmic-accent shadow-none cursor-pointer transition-all duration-200 uppercase hover:bg-cosmic-accent hover:text-cosmic-bg active:translate-y-[1px] active:scale-[0.99] text-xs md:text-xs p-[15px] mt-6 w-full max-w-[200px]">
+                class="mode-btn font-press-start px-[18px] py-[12px] bg-black text-white border border-white shadow-none cursor-pointer transition-all duration-200 uppercase hover:bg-white hover:text-black active:translate-y-[1px] active:scale-[0.99] text-xs md:text-xs p-[15px] mt-6 w-full max-w-[200px]">
                 ABOUT Me
             </button>
         </div>
@@ -55,10 +55,10 @@
             class="hidden absolute top-0 left-0 w-full h-full bg-black/90 z-50 flex flex-col justify-center items-center text-center text-white">
             <h2 class="text-3xl md:text-[40px] mb-6 md:mb-[30px]">SYSTEM PAUSED</h2>
             <button id="btn-resume"
-                class="mode-btn font-press-start text-sm md:text-sm px-6 md:px-[18px] py-5 md:py-[12px] bg-cosmic-bg text-cosmic-text border border-cosmic-accent shadow-none cursor-pointer transition-all duration-200 uppercase mt-3 hover:bg-cosmic-accent hover:text-cosmic-bg w-[85%] max-w-[300px]">RESUME
+                class="mode-btn font-press-start text-sm md:text-sm px-6 md:px-[18px] py-5 md:py-[12px] bg-black text-white border border-white shadow-none cursor-pointer transition-all duration-200 uppercase mt-3 hover:bg-white hover:text-black w-[85%] max-w-[300px]">RESUME
                 MISSION</button>
             <button id="btn-quit"
-                class="mode-btn font-press-start text-sm md:text-sm px-6 md:px-[18px] py-5 md:py-[12px] bg-cosmic-bg text-cosmic-text border border-cosmic-accent shadow-none cursor-pointer transition-all duration-200 uppercase mt-3 hover:bg-cosmic-accent hover:text-cosmic-bg w-[85%] max-w-[300px]">ABORT
+                class="mode-btn font-press-start text-sm md:text-sm px-6 md:px-[18px] py-5 md:py-[12px] bg-black text-white border border-white shadow-none cursor-pointer transition-all duration-200 uppercase mt-3 hover:bg-white hover:text-black w-[85%] max-w-[300px]">ABORT
                 TO MENU</button>
         </div>
 
@@ -70,25 +70,25 @@
 
         <!-- About Modal -->
         <div id="about-modal"
-            class="hidden about-overlay absolute top-0 left-0 w-full h-full bg-black z-[60] text-cosmic-text p-6 md:p-12 box-border overflow-y-auto flex flex-col">
+            class="hidden about-overlay absolute top-0 left-0 w-full h-full bg-black z-[60] text-white p-6 md:p-12 box-border overflow-y-auto flex flex-col">
             <h2
-                class="about-title mb-8 tracking-[4px] text-cosmic-text text-2xl md:text-3xl text-center uppercase border-b-2 border-cosmic-accent pb-4">
+                class="about-title mb-8 tracking-[4px] text-white text-2xl md:text-3xl text-center uppercase border-b-2 border-white pb-4">
                 MISSION BRIEFING
             </h2>
 
             <div class="flex-grow flex flex-col justify-center gap-8 max-w-[800px] mx-auto w-full">
                 <!-- Modes -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="about-mode bg-white/5 p-4 border border-white/20">
-                        <strong class="text-[#00FFCC] block mb-2 text-sm tracking-wider">GALACTIC ODYSSEY</strong>
-                        <p class="text-cosmic-muted text-xs leading-relaxed">
+                    <div class="about-mode bg-black p-4 border border-white">
+                        <strong class="text-white block mb-2 text-sm tracking-wider">GALACTIC ODYSSEY</strong>
+                        <p class="text-gray-400 text-xs leading-relaxed">
                             Embark on a voyage across 500 sectors. Battle immense bosses every 10 levels.
                             Collect Hearts to repair your hull.
                         </p>
                     </div>
-                    <div class="about-mode bg-white/5 p-4 border border-white/20">
-                        <strong class="text-[#FF0055] block mb-2 text-sm tracking-wider">CLASSIC ARCADE</strong>
-                        <p class="text-cosmic-muted text-xs leading-relaxed">
+                    <div class="about-mode bg-black p-4 border border-white">
+                        <strong class="text-white block mb-2 text-sm tracking-wider">CLASSIC ARCADE</strong>
+                        <p class="text-gray-400 text-xs leading-relaxed">
                             The original simulation. Pure survival. Compete for the ultimate High Score.
                             One life, infinite danger.
                         </p>
@@ -96,7 +96,7 @@
                 </div>
 
                 <!-- Intel -->
-                <div class="grid grid-cols-2 gap-8 text-center md:text-left border-t border-white/10 pt-6">
+                <div class="grid grid-cols-2 gap-8 text-center md:text-left border-t border-white pt-6">
                     <div>
                         <h3 class="text-cosmic-muted text-xs tracking-[2px] mb-3 uppercase">// CONTROLS</h3>
                         <ul class="text-sm leading-loose space-y-1">
@@ -118,11 +118,12 @@
 
             <div class="mt-auto pt-8 flex flex-col items-center gap-4">
                 <button id="btn-close-about"
-                    class="mode-btn font-press-start bg-transparent text-cosmic-text border border-cosmic-text hover:bg-white hover:text-black transition-all uppercase px-8 py-3 text-xs w-[200px]">
+                    class="mode-btn font-press-start bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase px-8 py-3 text-xs w-[200px]">
                     RESUME
                 </button>
                 <div class="text-[10px] text-cosmic-muted tracking-widest opacity-50">
-                    BUILT BY <a href="https://github.com/codxbrexx" target="_blank" class="text-white hover:text-cosmic-accent-strong transition-all">CODXBREXX</a>
+                    BUILT BY <a href="https://github.com/codxbrexx" target="_blank"
+                        class="text-white hover:text-cosmic-accent-strong transition-all">CODXBREXX</a>
                 </div>
             </div>
         </div>
@@ -136,9 +137,9 @@
                     class="text-white">0</span></p>
             <div class="flex flex-col gap-4 mt-6 items-center w-full">
                 <button id="btn-relaunch"
-                    class="mode-btn font-press-start text-sm md:text-base px-8 py-5 md:py-4 bg-transparent text-white border-2 border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[280px]">RETRY</button>
+                    class="mode-btn font-press-start text-sm md:text-base px-8 py-5 md:py-4 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[280px]">RETRY</button>
                 <button id="btn-return-menu"
-                    class="mode-btn font-press-start text-xs md:text-xs px-6 py-4 md:py-3 bg-transparent text-gray-400 border border-gray-600 hover:text-white hover:border-white transition-all uppercase w-full max-w-[220px]">RETURN
+                    class="mode-btn font-press-start text-xs md:text-xs px-6 py-4 md:py-3 bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[220px]">RETURN
                     TO BASE</button>
             </div>
         </div>
