@@ -102,10 +102,13 @@ export class GameManager {
         // Pause Button
         const pauseBtn = document.getElementById('mobile-pause-btn');
         if (pauseBtn) {
+            const stopProp = (e) => { e.stopPropagation(); };
             pauseBtn.addEventListener('touchstart', (e) => {
                 e.preventDefault(); e.stopPropagation();
                 this.togglePause();
             });
+            pauseBtn.addEventListener('touchmove', stopProp, { passive: false });
+            pauseBtn.addEventListener('touchend', stopProp, { passive: false });
         }
 
         // Thrust Button (if present)
@@ -116,13 +119,19 @@ export class GameManager {
                 this.keys['ArrowUp'] = true;
                 btnThrust.classList.add('bg-white/30');
             });
+
+            // Critical: Stop move events from bubbling to gameContainer and resetting keys
+            btnThrust.addEventListener('touchmove', (e) => {
+                e.preventDefault(); e.stopPropagation();
+            }, { passive: false });
+
             const endThrust = (e) => {
-                e.preventDefault();
+                e.preventDefault(); e.stopPropagation(); // Stop bubbling
                 this.keys['ArrowUp'] = false;
                 btnThrust.classList.remove('bg-white/30');
             };
-            btnThrust.addEventListener('touchend', endThrust);
-            btnThrust.addEventListener('touchcancel', endThrust);
+            btnThrust.addEventListener('touchend', endThrust, { passive: false });
+            btnThrust.addEventListener('touchcancel', endThrust, { passive: false });
         }
 
         // Fire Button (if present)
@@ -133,13 +142,16 @@ export class GameManager {
                 this.keys['KeyF'] = true;
                 btnFire.classList.add('bg-white/30');
             });
+            btnFire.addEventListener('touchmove', (e) => {
+                e.preventDefault(); e.stopPropagation();
+            }, { passive: false });
             const endFire = (e) => {
-                e.preventDefault();
+                e.preventDefault(); e.stopPropagation();
                 this.keys['KeyF'] = false;
                 btnFire.classList.remove('bg-white/30');
             };
-            btnFire.addEventListener('touchend', endFire);
-            btnFire.addEventListener('touchcancel', endFire);
+            btnFire.addEventListener('touchend', endFire, { passive: false });
+            btnFire.addEventListener('touchcancel', endFire, { passive: false });
         }
     }
 
