@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cosmic Escape: Infinite Void</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-gG7SVZpz.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-BVqZZpgk.css">
+  <script type="module" crossorigin src="./assets/index-CxkbMCdO.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-TxiWN4Fp.css">
 </head>
 
 <body>
@@ -19,12 +19,14 @@
 
             <button id="btn-classic" class="mode-btn">
                 CLASSIC ARCADE
-                <span class="desc">Dodge. Survive. High Score.</span>
+                <span class="desc">Pure Skill. High Scores.</span>
             </button>
-
             <button id="btn-story" class="mode-btn">
-                STORY CAMPAIGN
-                <span class="desc">Levels. Bosses. Upgrades.</span>
+                GALACTIC ODYSSEY
+                <span class="desc">Infinite Voyage. Boss Battles.</span>
+            </button>
+            <button id="btn-about" class="mode-btn" style="margin-top: 20px; font-size: 12px; padding: 15px;">
+                SYSTEM INTEL
             </button>
         </div>
 
@@ -40,10 +42,86 @@
             </div>
         </div>
 
+        <!-- Pause Overlay -->
+        <div id="pause-menu" class="hidden"
+            style="position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index: 50; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; text-align:center;">
+            <h2 style="font-size: 40px; margin-bottom: 30px;">SYSTEM PAUSED</h2>
+            <button id="btn-resume" class="mode-btn">RESUME MISSION</button>
+            <button id="btn-quit" class="mode-btn">ABORT TO MENU</button>
+        </div>
+
+        <!-- Countdown Overlay -->
+        <div id="countdown-overlay" class="hidden"
+            style="position: absolute; top:0; left:0; width:100%; height:100%; z-index: 55; display:flex; justify-content:center; align-items:center; pointer-events:none;">
+            <h1 id="countdown-text" style="font-size: 100px; color: #FFF; text-shadow: 0 0 20px #FFF;">3</h1>
+        </div>
+
+        <!-- About Modal -->
+        <!-- About Modal -->
+        <div id="about-modal" class="hidden about-overlay">
+            <div class="about-content">
+                <h2 class="about-title">MISSION BRIEFING</h2>
+
+                <div class="about-grid">
+                    <div>
+                        <h3 class="about-section-title">// FLIGHT CONTROLS</h3>
+                        <ul class="about-list">
+                            <li><strong>THRUST:</strong> Arrow Up / Space</li>
+                            <li><strong>ROTATE:</strong> Arrow Left / Right</li>
+                            <li><strong>FIRE:</strong> F / Z / Ctrl</li>
+                            <li><strong>PAUSE:</strong> P / Esc</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="about-section-title">// ENTITIES</h3>
+                        <ul class="about-list">
+                            <li><strong>COIN:</strong> +100 Score</li>
+                            <li><strong>HEART:</strong> +1 Life (Every 500 Pts)</li>
+                            <li><strong>ASTEROID:</strong> Avoid Impact</li>
+                            <li><strong>UFO/BOSS:</strong> Hostile. Destroy.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="about-section-title">// GAME MODES</h3>
+
+                <div class="about-mode">
+                    <strong style="color: #00FFCC;">GALACTIC ODYSSEY</strong>
+                    <p class="about-text">
+                        A tailored campaign across 500 sectors.<br>
+                        - BOSS BATTLES: Occur every 10 levels.<br>
+                        - SURVIVAL: Collect Hearts to repair your ship.
+                    </p>
+                </div>
+
+                <div class="about-mode">
+                    <strong style="color: #FF0055;">CLASSIC ARCADE</strong>
+                    <p class="about-text">
+                        The original simulation. Scaling difficulty. Compete for the High Score.
+                    </p>
+                </div>
+
+                <div class="about-footer">
+                    SYSTEM VERSION 1.2.0 
+                </div>
+
+                <div class="about-actions">
+                    <button id="btn-close-about" class="mode-btn"
+                        style="width: 200px; font-size: 12px; padding: 15px;">ACKNOWLEDGE</button>
+                </div>
+            </div>
+        </div>
+
         <div id="game-over" class="glass-panel hidden">
             <h2 style="color: #FF4444; margin: 0 0 10px 0;">CRITICAL FAILURE</h2>
             <p>SCORE: <span id="final-score">0</span></p>
-            <button id="restart-btn" class="mode-btn" style="width: auto;">RETRY</button>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; align-items: center;">
+                <button id="btn-relaunch" class="mode-btn" style="width: 200px; font-size: 12px;">RELAUNCH
+                    MISSION</button>
+                <button id="btn-return-menu" class="mode-btn" style="width: 200px; font-size: 12px;">RETURN TO
+                    BASE</button>
+            </div>
         </div>
         <canvas id="gameCanvas"></canvas>
         <p id="cheat-code">Hyperdrive: ↑ ↑ ↓ ↓ ← → ← → B A</p>

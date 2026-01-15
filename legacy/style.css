@@ -50,10 +50,10 @@ body {
     box-shadow: none;
 }
 
-#hud-top.glass-panel {
+/* #hud-top.glass-panel {
     background: transparent;
     border: none;
-}
+} */
 
 #cheat-code {
     position: absolute;

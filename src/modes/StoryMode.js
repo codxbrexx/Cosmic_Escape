@@ -4,6 +4,7 @@ import { Coin } from '../entities/Coin.js';
 import { Star } from '../entities/Star.js';
 import { Particle } from '../entities/Particle.js';
 import { Boss } from '../entities/Boss.js';
+import { Heart } from '../entities/Heart.js';
 import { Projectile } from '../entities/Projectile.js';
 import {
     CANVAS_WIDTH, CANVAS_HEIGHT, GAME_SPEED_START, COLOR_ASTEROID, COLOR_COIN
@@ -15,33 +16,32 @@ export class StoryMode {
         this.ctx = ctx;
         this.onGameOver = onGameOver;
 
-        // Progress
-        const savedData = JSON.parse(localStorage.getItem('storyProgress') || '{}');
-        this.maxLevelReached = savedData.maxLevel || 1;
+        // Progress: No Checkpoints. Always start at Level 1.
+        this.level = 1;
         this.xp = 0;
-        this.playerLevel = 1;
 
         // Game State
         this.gameSpeed = GAME_SPEED_START;
         this.score = 0;
+        this.highScore = localStorage.getItem('storyHighScore') || 0;
         this.lives = 3;
         this.frameCount = 0;
-        this.level = 1;
         this.coinsCollected = 0;
-        this.healProgress = 0;
 
         this.ship = new Ship();
         this.obstacles = [];
         this.coins = [];
+        this.hearts = [];
         this.particles = [];
         this.stars = [];
         this.bullets = [];
         this.boss = null;
 
         this.invulnerableTimer = 0;
+        this.lastHeartScore = 0;
 
         // upgrades
-        this.fireRateCoodown = 15; // Frames between shots
+        this.fireRateCoodown = 15;
         this.lastShotTime = 0;
 
         // Init Stars
@@ -75,10 +75,16 @@ export class StoryMode {
 
     update() {
         this.frameCount++;
-        this.score += 0.1;
+        this.score += 0.02; // Slower passive score
 
-        // Boss Spawn Check (Every 11 levels)
-        if (!this.boss && this.level % 11 === 0) {
+        // Heart Spawning (Every 500 score)
+        if (this.score - this.lastHeartScore >= 500) {
+            this.hearts.push(new Heart());
+            this.lastHeartScore = Math.floor(this.score);
+        }
+
+        // Boss Spawn Check (Every 10 levels)
+        if (!this.boss && this.level % 10 === 0) {
             this.boss = new Boss(this.level);
             this.createExplosion(CANVAS_WIDTH - 100, CANVAS_HEIGHT / 2, '#FF0000', 50);
         }
@@ -86,18 +92,12 @@ export class StoryMode {
         // Level Up Logic (If no boss)
         if (!this.boss && this.score >= this.level * 1000) {
             this.level++;
-            this.gameSpeed += 0.5;
+            this.gameSpeed += 0.2;
             this.updateEnvironment();
             this.createExplosion(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, '#FFF', 50);
-
-            // Save progress
-            if (this.level > this.maxLevelReached) {
-                this.maxLevelReached = this.level;
-                localStorage.setItem('storyProgress', JSON.stringify({ maxLevel: this.maxLevelReached }));
-            }
         }
 
-        // Entities
+        // Entities Update
         this.ship.update(this.particles, this.frameCount, this.invulnerableTimer, () => this.loseLife(), (x, y, c) => this.createExplosion(x, y, c));
 
         if (this.invulnerableTimer > 0) this.invulnerableTimer--;
@@ -114,6 +114,9 @@ export class StoryMode {
 
         this.coins.forEach(c => c.update(this.gameSpeed, this.frameCount));
         this.coins = this.coins.filter(c => !c.markedForDeletion);
+
+        this.hearts.forEach(h => h.update(this.gameSpeed));
+        this.hearts = this.hearts.filter(h => !h.markedForDeletion);
 
         this.bullets.forEach(b => b.update());
         this.bullets = this.bullets.filter(b => !b.markedForDeletion);
@@ -132,6 +135,7 @@ export class StoryMode {
         this.stars.forEach(s => s.draw(this.ctx));
         this.particles.forEach(p => p.draw(this.ctx));
         this.coins.forEach(c => c.draw(this.ctx));
+        this.hearts.forEach(h => h.draw(this.ctx));
         this.obstacles.forEach(obs => obs.draw(this.ctx));
         this.bullets.forEach(b => b.draw(this.ctx));
 
@@ -177,14 +181,12 @@ export class StoryMode {
             if (!b.isEnemy && !b.markedForDeletion && this.checkCollision(b, this.boss)) {
                 b.markedForDeletion = true;
                 this.boss.hp -= 1;
-                this.createExplosion(b.x, b.y, '#FFAA00', 3); // Hit effect
+                this.createExplosion(b.x, b.y, '#FFAA00', 3);
 
                 if (this.boss.hp <= 0) {
                     this.createExplosion(this.boss.x + this.boss.width / 2, this.boss.y + this.boss.height / 2, '#FF0000', 100);
                     this.score += 5000;
                     this.boss = null;
-                    this.level++; // Pass boss level
-                    this.updateEnvironment();
                 }
             }
         });
@@ -209,15 +211,16 @@ export class StoryMode {
         this.coins.forEach(c => {
             if (this.checkCollision(this.ship, c)) {
                 c.markedForDeletion = true;
-                this.score += 100;
                 this.coinsCollected++;
-                this.healProgress++;
-                if (this.healProgress >= 10) {
-                    this.lives++;
-                    this.healProgress = 0;
-                    this.createExplosion(this.ship.x, this.ship.y, '#00FF00', 20);
-                }
                 this.createExplosion(c.x, c.y, COLOR_COIN, 5);
+            }
+        });
+
+        this.hearts.forEach(h => {
+            if (this.checkCollision(this.ship, h)) {
+                h.markedForDeletion = true;
+                this.lives++;
+                this.createExplosion(h.x, h.y, '#FF0044', 20);
             }
         });
 
@@ -257,20 +260,24 @@ export class StoryMode {
         this.createExplosion(this.ship.x + this.ship.width / 2, this.ship.y + this.ship.height / 2, '#FF0000', 20);
 
         if (this.lives <= 0) {
+            if (this.score > this.highScore) {
+                this.highScore = this.score;
+                localStorage.setItem('storyHighScore', this.highScore);
+            }
             this.onGameOver({ score: this.score, mode: 'STORY' });
         }
     }
 
     getHUDData() {
-        const label = this.boss ? "BOSS BATTLE" : "LEVEL " + this.level;
+        const label = this.boss ? "BOSS DESTROYER" : "SECTOR " + this.level;
         const color = this.boss ? "#FF0000" : "#FFF";
         return {
             lives: this.lives,
             score: Math.floor(this.score),
-            highScore: "MAX LV: " + this.maxLevelReached,
+            highScore: "HI: " + Math.floor(this.highScore),
             label: label,
             labelColor: color,
-            coins: `${this.coinsCollected} (Heal ${this.healProgress}/10)`
+            coins: `${this.coinsCollected}`
         };
     }
 }

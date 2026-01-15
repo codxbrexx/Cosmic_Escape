@@ -19,13 +19,17 @@ document.getElementById('btn-story').addEventListener('click', () => {
     gameManager.startMode('STORY');
 });
 
-// Restart Button
-document.getElementById('restart-btn').addEventListener('click', () => {
-    // Restart the LAST active mode
-    if (gameManager.activeMode instanceof Object) {
-        window.location.reload();
-    }
+// About Button
+document.getElementById('btn-about').addEventListener('click', () => {
+    document.getElementById('about-modal').classList.remove('hidden');
 });
+
+document.getElementById('btn-close-about').addEventListener('click', () => {
+    document.getElementById('about-modal').classList.add('hidden');
+});
+
+// Restart/Menu logic now handled by GameManager internal reboot
+// document.getElementById('restart-btn') listener removed from index.html
 
 // Stars Background Loop (Menu)
 import { Star } from './entities/Star.js';

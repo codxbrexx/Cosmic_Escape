@@ -15,6 +15,7 @@ export class ClassicMode {
 
         this.gameSpeed = GAME_SPEED_START;
         this.score = 0;
+        this.scores = 0;
         this.highScore = localStorage.getItem('classicHighScore') || 0;
         this.lives = 3; // Optional: Classic usually 1 life, but 3 is fairer
         this.frameCount = 0;
@@ -22,6 +23,7 @@ export class ClassicMode {
         this.ship = new Ship();
         this.obstacles = [];
         this.coins = []; // Points only
+        this.coinsCollected = 0; // Fix: Track coins
         this.particles = [];
         this.stars = [];
 
@@ -121,7 +123,7 @@ export class ClassicMode {
         this.coins.forEach(c => {
             if (this.checkCollision(this.ship, c)) {
                 c.markedForDeletion = true;
-                this.score += 500; // Big points in classic
+                this.coinsCollected++; // Fix: Increment count
                 this.createExplosion(c.x + c.width / 2, c.y + c.height / 2, COLOR_COIN, 5);
             }
         });
@@ -155,10 +157,10 @@ export class ClassicMode {
         return {
             lives: this.lives,
             score: Math.floor(this.score),
-            highScore: Math.floor(this.highScore),
+            highScore: "HI: " + Math.floor(this.highScore), // Fix: Format string
             label: "CLASSIC",
             labelColor: "#00FFCC",
-            coins: null // No healing coins in classic
+            coins: this.coinsCollected // Fix: Return count
         };
     }
 }

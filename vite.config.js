@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import tailwindcss from 'tailwindcss';
 
 export default defineConfig({
     root: './',      // Ensure root is current directory
@@ -10,5 +11,8 @@ export default defineConfig({
     server: {
         port: 5173,
         open: true,    // Auto-open browser
-    }
+    },
+    plugins: [
+        tailwindcss(),
+    ],
 });
