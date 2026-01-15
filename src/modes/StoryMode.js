@@ -52,8 +52,19 @@ export class StoryMode {
 
     handleInput(keys) {
         if (!this.ship) return;
+
+        // Horizontal Movement
+        const speed = 8;
+        if (keys['ArrowLeft']) this.ship.x -= speed;
+        if (keys['ArrowRight']) this.ship.x += speed;
+
+        // Thrust
         if (keys['ArrowUp'] || keys['Space']) this.ship.thrusting = true;
         else this.ship.thrusting = false;
+
+        // Keep ship in bounds
+        if (this.ship.x < 0) this.ship.x = 0;
+        if (this.ship.x + this.ship.width > CANVAS_WIDTH) this.ship.x = CANVAS_WIDTH - this.ship.width;
 
         // Shooting
         if (keys['KeyF'] || keys['ControlLeft'] || keys['KeyZ']) {

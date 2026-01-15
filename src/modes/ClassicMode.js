@@ -33,12 +33,22 @@ export class ClassicMode {
         for (let i = 0; i < 150; i++) this.stars.push(new Star());
     }
 
+
     handleInput(keys) {
         if (!this.ship) return;
+
+        // Horizontal Movement
+        const speed = 8;
+        if (keys['ArrowLeft']) this.ship.x -= speed;
+        if (keys['ArrowRight']) this.ship.x += speed;
+
+        // Thrust
         if (keys['ArrowUp'] || keys['Space']) this.ship.thrusting = true;
         else this.ship.thrusting = false;
 
-        // No shooting in Classic
+        // Keep ship in bounds
+        if (this.ship.x < 0) this.ship.x = 0;
+        if (this.ship.x + this.ship.width > CANVAS_WIDTH) this.ship.x = CANVAS_WIDTH - this.ship.width;
     }
 
     update() {
@@ -123,7 +133,7 @@ export class ClassicMode {
         this.coins.forEach(c => {
             if (this.checkCollision(this.ship, c)) {
                 c.markedForDeletion = true;
-                this.coinsCollected++; // Fix: Increment count
+                this.coinsCollected++;
                 this.createExplosion(c.x + c.width / 2, c.y + c.height / 2, COLOR_COIN, 5);
             }
         });
