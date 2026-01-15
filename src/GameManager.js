@@ -202,8 +202,14 @@ export class GameManager {
         document.getElementById('start-menu').classList.add('hidden');
         document.getElementById('game-over').classList.add('hidden');
         document.getElementById('about-modal').classList.add('hidden');
-        // Instructions removed as requested
-        // document.getElementById('instructions').classList.remove('hidden');
+        document.getElementById('instructions').classList.remove('hidden');
+
+        const instr = document.getElementById('instructions');
+        if (modeType === 'STORY') {
+            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>GALACTIC ODYSSEY</strong></p>Arrows/Space to Fly<br>F/Z to Shoot<br>Use Checkpoints. Collect Hearts.`;
+        } else {
+            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>CLASSIC ARCADE</strong></p>Arrows/Space to Fly<br>Dodge Everything!<br>No Shooting. No Mercy.`;
+        }
 
         this.loop();
     }
