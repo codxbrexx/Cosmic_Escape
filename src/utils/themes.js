@@ -12,8 +12,7 @@ export const THEMES = [
 ];
 
 export function getThemeForLevel(level) {
-    // Change theme every 10 levels
-    // Logic: index 0 for 1-10, index 1 for 11-20
-    const themeIndex = Math.floor((level - 1) / 10) % THEMES.length;
+    // Change theme every level
+    const themeIndex = (level - 1) % THEMES.length;
     return THEMES[themeIndex];
 }

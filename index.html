@@ -30,7 +30,7 @@
             </button>
             <button id="btn-about"
                 class="mode-btn font-press-start px-[18px] py-[12px] bg-black text-white border border-white shadow-none cursor-pointer transition-all duration-200 uppercase hover:bg-white hover:text-black active:translate-y-[1px] active:scale-[0.99] text-xs md:text-xs p-[15px] mt-6 w-full max-w-[200px]">
-                ABOUT Me
+                ABOUT GAME
             </button>
         </div>
 
@@ -68,6 +68,15 @@
             <h1 id="countdown-text" class="text-7xl md:text-[100px] text-white">3</h1>
         </div>
 
+        <!-- Level/Sector Announcement Overlay -->
+        <div id="level-announcement"
+            class="hidden absolute top-0 left-0 w-full h-full z-[50] flex justify-center items-center pointer-events-none fade-in-out">
+            <h1 id="level-announcement-text"
+                class="text-5xl md:text-[80px] text-cosmic-accent-strong tracking-widest text-shadow-lg scale-up">
+                SECTOR 1
+            </h1>
+        </div>
+
         <!-- About Modal -->
         <div id="about-modal"
             class="hidden about-overlay absolute top-0 left-0 w-full h-full bg-black z-[60] text-white p-6 md:p-12 box-border overflow-y-auto flex flex-col">
@@ -83,7 +92,7 @@
                         <strong class="text-white block mb-2 text-sm tracking-wider">GALACTIC ODYSSEY</strong>
                         <p class="text-gray-400 text-xs leading-relaxed">
                             Embark on a voyage across 500 sectors. Battle immense bosses every 10 levels.
-                            Collect Hearts to repair your hull.
+                            Ship upgrades on Level Up. Collect 10 Coins for +1 Life.
                         </p>
                     </div>
                     <div class="about-mode bg-black p-4 border border-white">
@@ -108,7 +117,7 @@
                     <div>
                         <h3 class="text-cosmic-muted text-xs tracking-[2px] mb-3 uppercase">// INTEL</h3>
                         <ul class="text-sm leading-loose space-y-1">
-                            <li>🪙 +100 PTS</li>
+                            <li>🪙 +100 PTS | 10 = +1 LIFE</li>
                             <li>❤️ +1 LIFE</li>
                             <li>⚠️ AVOID IMPACT</li>
                         </ul>
@@ -148,7 +157,7 @@
             class="absolute bottom-2.5 left-2.5 text-cosmic-muted text-[8px] md:text-[10px] opacity-70 z-[5] pointer-events-none">
             Hyperdrive: ↑ ↑ ↓ ↓ Space </p>
     </div>
-    
+
     <div id="instructions"
         class="glass-panel hidden mt-3.5 p-3 px-3.5 text-cosmic-text text-[10px] md:text-xs leading-[1.4] z-10 pointer-events-none text-center w-auto bg-white/5 border border-[#1f2933] rounded-lg">
         <p class="text-cosmic-accent-strong mb-1"><strong>MISSION CONTROL</strong></p>

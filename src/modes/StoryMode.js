@@ -79,7 +79,7 @@ export class StoryMode {
         const theme = getThemeForLevel(this.level);
         const container = document.getElementById('game-container');
         if (container) {
-            container.style.background = theme.bg;
+            // container.style.background = theme.bg; // Keep background static
             container.style.borderColor = theme.border;
         }
     }
@@ -104,8 +104,21 @@ export class StoryMode {
         if (!this.boss && this.score >= this.level * 1000) {
             this.level++;
             this.gameSpeed += 0.2;
+            // Upgrade Fire Rate
+            this.fireRateCoodown = Math.max(5, 15 - this.level);
             this.updateEnvironment();
             this.createExplosion(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, '#FFF', 50);
+
+            // Show Sector Announcement
+            const announcement = document.getElementById('level-announcement');
+            const announcementText = document.getElementById('level-announcement-text');
+            if (announcement && announcementText) {
+                announcementText.innerText = "SECTOR " + this.level;
+                announcement.classList.remove('hidden');
+                setTimeout(() => {
+                    announcement.classList.add('hidden');
+                }, 3000);
+            }
         }
 
         // Entities Update
@@ -223,6 +236,7 @@ export class StoryMode {
             if (this.checkCollision(this.ship, c)) {
                 c.markedForDeletion = true;
                 this.coinsCollected++;
+                if (this.coinsCollected % 10 === 0) this.lives++;
                 this.createExplosion(c.x, c.y, COLOR_COIN, 5);
             }
         });
