@@ -164,7 +164,7 @@ function update() {
         }
     }
 
-    score += 0.1; // Passive score
+    score += 0.1; 
     updateHUD();
     frameCount++;
 }
@@ -173,8 +173,6 @@ function loseLife() {
     lives--;
     invulnerableTimer = 60; // 1 second invulnerability (assuming 60fps)
 
-    // Screen Shake Effect (simulate by offsetting canvas container? or simplest: just flash red overlay)
-    // For now, let's just do explosion
     createExplosion(ship.x + ship.width / 2, ship.y + ship.height / 2, '#FF0000', 20);
 
     if (lives <= 0) {

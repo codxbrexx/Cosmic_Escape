@@ -84,8 +84,7 @@ class Ship {
     update() {
         // Physics
         if (this.thrusting) {
-            this.vy += THRUST_FORCE * 0.1; // Gradual thrust
-            // Emit trail particles
+            this.vy += THRUST_FORCE * 0.1; 
             if (frameCount % 3 === 0) {
                 particles.push(new Particle(this.x, this.y + this.height - 10, COLOR_ENGINE, 4, 3));
             }
@@ -109,7 +108,7 @@ class Ship {
             if (invulnerableTimer <= 0) {
                 loseLife();
                 createExplosion(this.x + this.width / 2, this.y + this.height, '#FF4444');
-                ship.vy = -12; // Hard bounce
+                ship.vy = -12; 
             }
         }
     }

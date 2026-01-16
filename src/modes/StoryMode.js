@@ -86,7 +86,7 @@ export class StoryMode {
 
     update() {
         this.frameCount++;
-        this.score += 0.02; // Slower passive score
+        this.score += 0.1;
 
         // Heart Spawning (Every 500 score)
         if (this.score - this.lastHeartScore >= 500) {

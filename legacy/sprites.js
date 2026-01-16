@@ -43,7 +43,7 @@ const SPRITE_COIN = [
 
 
 class Sprite {
-    constructor(bitmaps, scale = 4) { // Increased default scale for larger screen
+    constructor(bitmaps, scale = 4) { 
         if (!Array.isArray(bitmaps[0])) {
             this.frames = [bitmaps];
         } else {
