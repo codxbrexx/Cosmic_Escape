@@ -1,9 +1,9 @@
 // --- CONSTANTS & CONFIG ---
 export const CANVAS_WIDTH = 1200;
 export const CANVAS_HEIGHT = 600;
-export const GRAVITY = 0.25;
-export const THRUST_FORCE = -6;
-export const GAME_SPEED_START = 6;
+export const GRAVITY = 0.35; // Slightly heavier feel
+export const THRUST_FORCE = -8; // Stronger thrust to compensate for drag
+export const GAME_SPEED_START = 4; // Slower start (was 6)
 export const MAX_SPEED = 15;
 
 // Colors
@@ -16,9 +16,9 @@ export const COLOR_COIN = '#FFD700'; // Gold
 
 // Level Themes (Background Gradients)
 export const LEVEL_THEMES = [
-    "linear-gradient(to bottom, #000000 0%, #1a1a2e 100%)", 
-    "linear-gradient(to bottom, #1a0b2e 0%, #3a0e35 100%)", 
-    "linear-gradient(to bottom, #2e0b0b 0%, #3a0e0e 100%)", 
-    "linear-gradient(to bottom, #001a0a 0%, #003311 100%)", 
-    "linear-gradient(to bottom, #2e1a0b 0%, #3a2e0e 100%)", 
+    "linear-gradient(to bottom, #000000 0%, #1a1a2e 100%)",
+    "linear-gradient(to bottom, #1a0b2e 0%, #3a0e35 100%)",
+    "linear-gradient(to bottom, #2e0b0b 0%, #3a0e0e 100%)",
+    "linear-gradient(to bottom, #001a0a 0%, #003311 100%)",
+    "linear-gradient(to bottom, #2e1a0b 0%, #3a2e0e 100%)",
 ];

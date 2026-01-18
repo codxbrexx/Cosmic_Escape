@@ -1,7 +1,7 @@
 import { shipSprite } from '../utils/Sprite.js';
 import { Particle } from './Particle.js';
 import { Projectile } from './Projectile.js';
-import { CANVAS_HEIGHT, GRAVITY, THRUST_FORCE, COLOR_SHIP, COLOR_ENGINE } from '../constants.js';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, GRAVITY, THRUST_FORCE, COLOR_SHIP, COLOR_ENGINE } from '../constants.js';
 
 export class Ship {
     constructor() {
@@ -21,15 +21,21 @@ export class Ship {
             if (frameCount % 3 === 0) {
                 particles.push(new Particle(this.x, this.y + this.height - 10, COLOR_ENGINE, 4, 3));
             }
-        } else {
             this.vy += GRAVITY;
         }
+
+        // Apply Drag (Air Resistance) for smoothness
+        this.vy *= 0.96;
 
         // Cap speed
         if (this.vy > 8) this.vy = 8;
         if (this.vy < -8) this.vy = -8;
 
         this.y += this.vy;
+
+        // Bounds X (Safety Clamp)
+        if (this.x < 0) this.x = 0;
+        if (this.x + this.width > CANVAS_WIDTH) this.x = CANVAS_WIDTH - this.width;
 
         // Bounds
         if (this.y < 0) {

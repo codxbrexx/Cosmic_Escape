@@ -9,10 +9,17 @@ A modern, high-octane architectural arcade shooter built with **Vite**, **Tailwi
 
 **Cosmic Escape** puts you in the cockpit of a lone starfighter. Your mission is simple: survive the infinite void. 
 
-The game features two distinct modes:
+The game features three distinct modes:
 
-*   **GALACTIC ODYSSEY (Story Mode)**: A tailored campaign across 500 sectors. Battle immense bosses every 10 levels, collect hearts to repair your hull, and upgrade your ship.
-*   **CLASSIC ARCADE (Survival Mode)**: The original simulation. Scaling difficulty, one life, infinite danger. Compete for the ultimate High Score.
+*   **GALACTIC ODYSSEY (Story Mode)**: A tailored campaign across 500 sectors.
+    *   **Progression**: Level up to upgrade your ship (Faster Fire Rate).
+    *   **Bosses**: Battle immense bosses every 10 levels.
+    *   **Economy**: Collect Coins to gain Hearts (10 Coins = +1 Life).
+*   **SURVIVAL PROTOCOL**: A high-intensity challenge.
+    *   **Objective**: Survive for 30 Seconds per level.
+    *   **Weapons Free**: Blast through dense asteroid fields and UFO swarms.
+    *   **No Bosses**: Pure hazard avoidance and elimination.
+*   **CLASSIC ARCADE**: The original simulation. Scaling difficulty, one life, infinite danger.
 
 ## 🎮 Controls
 
@@ -20,10 +27,9 @@ The game fully supports both **Keyboard** (Desktop) and **Touch** (Mobile/Tablet
 
 | Action | Desktop (Keyboard) | Mobile (Touch) |
 | :--- | :--- | :--- |
-| **Thrust** | Arrow Up / Space | On-Screen Button (⬆️) |
-| **Rotate** | Arrow Left / Right | On-Screen Buttons (⬅️ / ➡️) |
-| **Fire** | F / Z / Ctrl | On-Screen Button (FIRE) |
-| **Pause** | P / Esc | Top-Right Icon (⏸️) |
+| **Move** | Arrow Keys | Touch & Drag (Anywhere) |
+| **Fire** | F / Z / Ctrl | Auto / Tap (Mode Dependent) |
+| **Pause** | P / Esc | Top-Left Icon (⏸️) |
 
 ## 🛠️ Tech Stack
 
@@ -60,9 +66,10 @@ The game fully supports both **Keyboard** (Desktop) and **Touch** (Mobile/Tablet
 ## 🌌 Features
 
 *   **Responsive Design**: Automatically scales from Mobile to Desktop (2:1 Aspect Ratio).
-*   **Mobile Optimized**: `touch-none` handling, large hit zones, and dedicated mobile UI.
-*   **Persistent Scores**: High scores are saved locally for both Story and Classic modes.
-*   **Monochrome Aesthetic**: A sleek, high-contrast black and white theme inspired by retro terminals.
+*   **Mobile Optimized**: `touch-none` handling, dynamic joystick-like control.
+*   **Visual Polish**: Dynamic borders, particle explosions, and sector announcements.
+*   **Persistent Scores**: High scores are saved locally for all modes.
+*   **Monochrome & Color**: A sleek aesthetic that evolves as you play.
 
 ## 👨‍💻 Creator
 

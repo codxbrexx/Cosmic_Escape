@@ -56,7 +56,7 @@ export class ClassicMode {
         this.score += 0.1;
 
         // Accelerate faster in Classic
-        if (this.frameCount % 300 === 0) this.gameSpeed += 0.5;
+        if (this.frameCount % 600 === 0) this.gameSpeed += 0.2; // Slower acceleration (was 300 / 0.5)
 
         // Entities
         this.ship.update(this.particles, this.frameCount, this.invulnerableTimer, () => this.loseLife(), (x, y, c) => this.createExplosion(x, y, c));

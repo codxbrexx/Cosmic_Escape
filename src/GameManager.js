@@ -1,5 +1,6 @@
 import { StoryMode } from './modes/StoryMode.js';
 import { ClassicMode } from './modes/ClassicMode.js';
+import { BossRushMode } from './modes/BossRushMode.js';
 import gsap from 'gsap';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants.js';
 
@@ -25,15 +26,28 @@ export class GameManager {
     }
 
     setupUI() {
-        // Resume
+        // Resume & Quit (Pause Menu)
         document.getElementById('btn-resume').addEventListener('click', () => this.togglePause());
-        // Quit
         document.getElementById('btn-quit').addEventListener('click', () => this.resetToMenu());
+
+        // Mode Selection
+        document.getElementById('btn-classic').addEventListener('click', () => this.startMode('CLASSIC'));
+        document.getElementById('btn-story').addEventListener('click', () => this.startMode('STORY'));
+        document.getElementById('btn-bossrush').addEventListener('click', () => this.startMode('BOSS_RUSH'));
+        document.getElementById('btn-about').addEventListener('click', () => {
+            document.getElementById('about-modal').classList.remove('hidden');
+        });
+        document.getElementById('btn-close-about').addEventListener('click', () => {
+            document.getElementById('about-modal').classList.add('hidden');
+        });
 
         // Game Over Buttons
         document.getElementById('btn-relaunch').addEventListener('click', () => {
             // Restart current mode
-            const currentModeType = this.activeMode instanceof StoryMode ? 'STORY' : 'CLASSIC';
+            let currentModeType = 'CLASSIC';
+            if (this.activeMode instanceof StoryMode) currentModeType = 'STORY';
+            if (this.activeMode instanceof BossRushMode) currentModeType = 'BOSS_RUSH';
+
             this.startMode(currentModeType);
         });
 
@@ -51,7 +65,7 @@ export class GameManager {
             // Only handle game inputs if the game is actually running
             if (!this.isRunning) return;
 
-            e.preventDefault(); // Prevent scrolling only during gameplay
+            e.preventDefault();
 
             // Reset keys handled by touch
             this.keys['ArrowLeft'] = false;
@@ -184,6 +198,8 @@ export class GameManager {
     startMode(modeType) {
         if (modeType === 'STORY') {
             this.activeMode = new StoryMode(this.ctx, (results) => this.endGame(results));
+        } else if (modeType === 'BOSS_RUSH') {
+            this.activeMode = new BossRushMode(this.ctx, (results) => this.endGame(results));
         } else {
             this.activeMode = new ClassicMode(this.ctx, (results) => this.endGame(results));
         }
@@ -200,7 +216,9 @@ export class GameManager {
 
         const instr = document.getElementById('instructions');
         if (modeType === 'STORY') {
-            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>GALACTIC ODYSSEY</strong></p>Arrows/Space to Fly<br>F/Z to Shoot<br>Use Checkpoints. Collect Hearts.`;
+            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>GALACTIC ODYSSEY</strong></p>Arrows/Space to Fly<br>F/Z to Shoot<br>Level Up & Collect Hearts.`;
+        } else if (modeType === 'BOSS_RUSH') {
+            instr.innerHTML = `<p class="text-green-500 mb-1"><strong>🛡️ SURVIVAL PROTOCOL</strong></p>WEAPONS DISABLED.<br>Dodge for 30s to Survive.<br>Use your piloting skills!`;
         } else {
             instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>CLASSIC ARCADE</strong></p>Arrows/Space to Fly<br>Dodge Everything!<br>No Shooting. No Mercy.`;
         }

@@ -103,7 +103,7 @@ export class StoryMode {
         // Level Up Logic (If no boss)
         if (!this.boss && this.score >= this.level * 1000) {
             this.level++;
-            this.gameSpeed += 0.2;
+            this.gameSpeed += 0.1; // Slower acceleration (was 0.2)
             // Upgrade Fire Rate
             this.fireRateCoodown = Math.max(5, 15 - this.level);
             this.updateEnvironment();

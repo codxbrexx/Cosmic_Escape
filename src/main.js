@@ -28,9 +28,6 @@ document.getElementById('btn-close-about').addEventListener('click', () => {
     document.getElementById('about-modal').classList.add('hidden');
 });
 
-// Restart/Menu logic now handled by GameManager internal reboot
-// document.getElementById('restart-btn') listener removed from index.html
-
 // Stars Background Loop (Menu)
 import { Star } from './entities/Star.js';
 let stars = [];

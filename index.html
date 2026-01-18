@@ -28,6 +28,10 @@
                 class="mode-btn group font-press-start text-sm md:text-base w-full max-w-[320px] px-6 md:px-[40px] py-5 md:py-[20px] bg-black text-white border-2 border-white shadow-none cursor-pointer transition-all duration-100 uppercase mt-2.5 hover:bg-white hover:text-black active:bg-gray-300">
                 GALACTIC ODYSSEY
             </button>
+            <button id="btn-bossrush"
+                class="mode-btn group font-press-start text-sm md:text-base w-full max-w-[320px] px-6 md:px-[40px] py-5 md:py-[20px] bg-black text-white border-2 border-white shadow-none cursor-pointer transition-all duration-100 uppercase mt-2.5 hover:bg-white hover:text-black active:bg-green-800">
+                SURVIVAL PROTOCOL
+            </button>
             <button id="btn-about"
                 class="mode-btn font-press-start px-[18px] py-[12px] bg-black text-white border border-white shadow-none cursor-pointer transition-all duration-200 uppercase hover:bg-white hover:text-black active:translate-y-[1px] active:scale-[0.99] text-xs md:text-xs p-[15px] mt-6 w-full max-w-[200px]">
                 ABOUT GAME
@@ -72,7 +76,7 @@
         <div id="level-announcement"
             class="hidden absolute top-0 left-0 w-full h-full z-[50] flex justify-center items-center pointer-events-none fade-in-out">
             <h1 id="level-announcement-text"
-                class="text-5xl md:text-[80px] text-cosmic-accent-strong tracking-widest text-shadow-lg scale-up">
+                class="text-xl md:text-2xl text-cosmic-accent-strong tracking-widest text-shadow-lg scale-up">
                 SECTOR 1
             </h1>
         </div>
@@ -87,19 +91,29 @@
 
             <div class="flex-grow flex flex-col justify-center gap-8 max-w-[800px] mx-auto w-full">
                 <!-- Modes -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="about-mode bg-black p-4 border border-white">
-                        <strong class="text-white block mb-2 text-sm tracking-wider">GALACTIC ODYSSEY</strong>
-                        <p class="text-gray-400 text-xs leading-relaxed">
-                            Embark on a voyage across 500 sectors. Battle immense bosses every 10 levels.
-                            Ship upgrades on Level Up. Collect 10 Coins for +1 Life.
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="about-mode bg-black p-3 border border-white">
+                        <strong class="text-white block mb-2 text-xs tracking-wider">1. CLASSIC ARCADE</strong>
+                        <p class="text-gray-400 text-[10px] leading-relaxed">
+                            The original simulation.<br>
+                            - One Life. Infinite Scoring.<br>
+                            - Game speed increases.
                         </p>
                     </div>
-                    <div class="about-mode bg-black p-4 border border-white">
-                        <strong class="text-white block mb-2 text-sm tracking-wider">CLASSIC ARCADE</strong>
-                        <p class="text-gray-400 text-xs leading-relaxed">
-                            The original simulation. Pure survival. Compete for the ultimate High Score.
-                            One life, infinite danger.
+                    <div class="about-mode bg-black p-3 border border-white">
+                        <strong class="text-white block mb-2 text-xs tracking-wider">2. GALACTIC ODYSSEY</strong>
+                        <p class="text-gray-400 text-[10px] leading-relaxed">
+                            Campaign across 500 sectors.<br>
+                            - Collect Coins (10 = +1 Life)<br>
+                            - Level Up for Ship Upgrades
+                        </p>
+                    </div>
+                    <div class="about-mode bg-black p-3 border border-white">
+                        <strong class="text-white block mb-2 text-xs tracking-wider">3. SURVIVAL PROTOCOL</strong>
+                        <p class="text-gray-400 text-[10px] leading-relaxed">
+                            High-Intensity Challenge.<br>
+                            - Survive 30s per Level<br>
+                            - Weapons Free. Destroy Hazards.
                         </p>
                     </div>
                 </div>
@@ -107,16 +121,16 @@
                 <!-- Intel -->
                 <div class="grid grid-cols-2 gap-8 text-center md:text-left border-t border-white pt-6">
                     <div>
-                        <h3 class="text-cosmic-muted text-xs tracking-[2px] mb-3 uppercase">// CONTROLS</h3>
-                        <ul class="text-sm leading-loose space-y-1">
+                        <h3 class="text-cosmic-muted text-[10px] tracking-[2px] mb-3 uppercase">// CONTROLS</h3>
+                        <ul class="text-[10px] leading-loose space-y-1">
                             <li><span class="text-cosmic-accent-strong">MOVE:</span> Arrows / Touch</li>
                             <li><span class="text-cosmic-accent-strong">FIRE:</span> F / Button</li>
                             <li><span class="text-cosmic-accent-strong">PAUSE:</span> P / Esc</li>
                         </ul>
                     </div>
                     <div>
-                        <h3 class="text-cosmic-muted text-xs tracking-[2px] mb-3 uppercase">// INTEL</h3>
-                        <ul class="text-sm leading-loose space-y-1">
+                        <h3 class="text-cosmic-muted text-[10px] tracking-[2px] mb-3 uppercase">// INTEL</h3>
+                        <ul class="text-[10px] leading-loose space-y-1">
                             <li>🪙 +100 PTS | 10 = +1 LIFE</li>
                             <li>❤️ +1 LIFE</li>
                             <li>⚠️ AVOID IMPACT</li>
@@ -128,11 +142,11 @@
             <div class="mt-auto pt-8 flex flex-col items-center gap-4">
                 <button id="btn-close-about"
                     class="mode-btn font-press-start bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase px-8 py-3 text-xs w-[200px]">
-                    RESUME
+                    BACK
                 </button>
                 <div class="text-[10px] text-cosmic-muted tracking-widest opacity-50">
                     BUILT BY <a href="https://github.com/codxbrexx" target="_blank"
-                        class="text-white hover:text-cosmic-accent-strong transition-all">CODXBREXX</a>
+                        class="text-white hover:text-blue-800 hover:underline hover:font-bold transition-all">CODXBREXX</a>
                 </div>
             </div>
         </div>
