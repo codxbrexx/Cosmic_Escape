@@ -4,28 +4,34 @@ import { Projectile } from './Projectile.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, GRAVITY, THRUST_FORCE, COLOR_SHIP, COLOR_ENGINE } from '../constants.js';
 
 export class Ship {
-    constructor() {
+    constructor(config = {}) {
         this.x = 100;
         this.y = CANVAS_HEIGHT / 2;
         this.vy = 0;
         this.width = shipSprite.width;
         this.height = shipSprite.height;
         this.thrusting = false;
+
+        // Physics Config
+        this.gravity = config.gravity || 0.25;
+        this.thrust = config.thrust || -6;
+        this.drag = config.drag || 0.96; // Default to standard drag
     }
 
     // Pass an onCreateParticle callback or the particles array
     update(particles, frameCount, invulnerableTimer, loseLifeCallback, createExplosionCallback) {
         // Physics
         if (this.thrusting) {
-            this.vy += THRUST_FORCE * 0.10; // sensitivity of thrust
+            this.vy += this.thrust * 0.10; // sensitivity of thrust
             if (frameCount % 3 === 0) {
                 particles.push(new Particle(this.x, this.y + this.height - 10, COLOR_ENGINE, 4, 3));
             }
-            this.vy += GRAVITY;
         }
+        // Gravity always applies
+        this.vy += this.gravity;
 
         // Apply Drag (Air Resistance) for smoothness
-        this.vy *= 0.96;
+        this.vy *= this.drag;
 
         // Cap speed
         if (this.vy > 8) this.vy = 8;
@@ -37,7 +43,7 @@ export class Ship {
         if (this.x < 0) this.x = 0;
         if (this.x + this.width > CANVAS_WIDTH) this.x = CANVAS_WIDTH - this.width;
 
-        // Bounds
+        // Bounds Y
         if (this.y < 0) {
             this.y = 0;
             this.vy = 0;

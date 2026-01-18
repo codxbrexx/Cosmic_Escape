@@ -20,7 +20,11 @@ export class ClassicMode {
         this.lives = 3; // Optional: Classic usually 1 life, but 3 is fairer
         this.frameCount = 0;
 
-        this.ship = new Ship();
+        this.ship = new Ship({
+            gravity: 0.25, // Snappy gravity
+            thrust: -6,    // Strong thrust
+            drag: 0.94     // High drag for control
+        });
         this.obstacles = [];
         this.coins = []; // Points only
         this.coinsCollected = 0; // Fix: Track coins

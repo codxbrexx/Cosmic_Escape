@@ -18,7 +18,11 @@ export class BossRushMode {
         this.lives = 4;
         this.frameCount = 0;
 
-        this.ship = new Ship();
+        this.ship = new Ship({
+            gravity: 0.15, // Low gravity
+            thrust: -5,    // Gentle thrust
+            drag: 0.99     // High drift (low drag)
+        });
 
         // Survival specific
         this.survivalTimeLeft = 30; // Seconds
@@ -77,7 +81,7 @@ export class BossRushMode {
         this.frameCount++;
 
         // Score based on survival time (fast drip)
-        this.score += 0.5;
+        this.score += 0.1; // score speed
 
         // Timer Logic
         if (this.frameCount % 60 === 0) {

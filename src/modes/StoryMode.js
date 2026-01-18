@@ -28,7 +28,11 @@ export class StoryMode {
         this.frameCount = 0;
         this.coinsCollected = 0;
 
-        this.ship = new Ship();
+        this.ship = new Ship({
+            gravity: 0.22, // Balanced
+            thrust: -5,
+            drag: 0.95 
+        });
         this.obstacles = [];
         this.coins = [];
         this.hearts = [];

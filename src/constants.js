@@ -1,9 +1,9 @@
 // --- CONSTANTS & CONFIG ---
 export const CANVAS_WIDTH = 1200;
 export const CANVAS_HEIGHT = 600;
-export const GRAVITY = 0.35; // Slightly heavier feel
-export const THRUST_FORCE = -8; // Stronger thrust to compensate for drag
-export const GAME_SPEED_START = 4; // Slower start (was 6)
+export const GRAVITY = 0.25; // Low gravity (Space feel)
+export const THRUST_FORCE = -6; // Gentle thrust
+export const GAME_SPEED_START = 4; // Slower start
 export const MAX_SPEED = 15;
 
 // Colors
