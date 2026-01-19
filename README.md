@@ -7,7 +7,7 @@ A modern, high-octane architectural arcade shooter built with **Vite**, **Tailwi
 
 ## 🚀 Mission Briefing
 
-**Cosmic Escape** puts you in the cockpit of a lone starfighter. Your mission is simple: survive the infinite void. 
+**Cosmic Escape** puts you in the cockpit of a lone starfighter. Your mission is simple: survive the infinite void.
 
 The game features three distinct modes:
 
@@ -17,8 +17,8 @@ The game features three distinct modes:
     *   **Economy**: Collect Coins to gain Hearts (10 Coins = +1 Life).
 *   **SURVIVAL PROTOCOL**: A high-intensity challenge.
     *   **Objective**: Survive for 30 Seconds per level.
-    *   **Weapons Free**: Blast through dense asteroid fields and UFO swarms.
-    *   **No Bosses**: Pure hazard avoidance and elimination.
+    *   **Weapons Disabled**: Pure piloting skill required.
+    *   **No Bosses**: Focus on hazard avoidance.
 *   **CLASSIC ARCADE**: The original simulation. Scaling difficulty, one life, infinite danger.
 
 ## 🎮 Controls
@@ -27,9 +27,9 @@ The game fully supports both **Keyboard** (Desktop) and **Touch** (Mobile/Tablet
 
 | Action | Desktop (Keyboard) | Mobile (Touch) |
 | :--- | :--- | :--- |
-| **Move** | Arrow Keys | Touch & Drag (Anywhere) |
-| **Fire** | F / Z / Ctrl | Auto / Tap (Mode Dependent) |
-| **Pause** | P / Esc | Top-Left Icon (⏸️) |
+| **Move** | Arrow Keys | Tap & Hold (Thrust) |
+| **Fire** | F / Z / Ctrl | Auto-Fire (While Thrusting) |
+| **Pause** | P / Esc | Top-Left Icon |
 
 ## 🛠️ Tech Stack
 
