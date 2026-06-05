@@ -19,23 +19,23 @@ export class Boss {
         this.direction = 1;
     }
 
-    update(projectiles, ship) {
+    update(projectiles, ship, dt = 1) {
         // Entrance animation
         if (this.x > CANVAS_WIDTH - 300) {
-            this.x -= 2;
+            this.x -= 2 * dt;
         }
 
         // Bob Up/Down
-        this.moveTimer += 0.05;
-        this.y += Math.sin(this.moveTimer) * 2;
+        this.moveTimer += 0.05 * dt;
+        this.y += Math.sin(this.moveTimer) * 2 * dt;
 
         // Clamp Y
         if (this.y < 0) this.y = 0;
         if (this.y > CANVAS_HEIGHT - this.height) this.y = CANVAS_HEIGHT - this.height;
 
         // Shoot at player
-        this.shootTimer++;
-        if (this.shootTimer > 60) { // Shoot every second (approx)
+        this.shootTimer += dt;
+        if (this.shootTimer > 60) { // Shoot every ~second at 60fps
             this.shootTimer = 0;
             // Spawn bullet aimed roughly at ship y
             projectiles.push(new Projectile(this.x, this.y + this.height / 2, true));

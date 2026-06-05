@@ -226,12 +226,19 @@ export class GameManager {
         this.loop();
     }
 
-    loop() {
+    loop(timestamp = 0) {
         if (!this.isRunning) return;
 
+        // Delta-time: milliseconds since last frame, capped at 50ms to
+        // prevent huge physics jumps after tab-switch or resize.
+        const rawDt = timestamp - (this._lastTimestamp || timestamp);
+        this._lastTimestamp = timestamp;
+        // Normalize to 60fps baseline so dt=1 at 60fps, dt≈0.5 at 120fps, etc.
+        const dt = Math.min(rawDt, 50) / 16.667;
+
         if (!this.isPaused && !this.isCountingDown && this.activeMode) {
-            this.activeMode.handleInput(this.keys);
-            this.activeMode.update();
+            this.activeMode.handleInput(this.keys, dt);
+            this.activeMode.update(dt);
             this.activeMode.draw();
             this.updateHUD(this.activeMode.getHUDData());
         } else if (this.isPaused || this.isCountingDown) {
@@ -239,7 +246,7 @@ export class GameManager {
             if (this.activeMode) this.activeMode.draw();
         }
 
-        requestAnimationFrame(() => this.loop());
+        requestAnimationFrame((ts) => this.loop(ts));
     }
 
     updateHUD(data) {
