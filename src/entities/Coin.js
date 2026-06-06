@@ -12,9 +12,9 @@ export class Coin {
         this.bobOffset = Math.random() * 100;
     }
 
-    update(gameSpeed, frameCount) {
-        this.x -= gameSpeed;
-        this.y += Math.sin((frameCount + this.bobOffset) * 0.1) * 0.5; // Bob logic
+    update(gameSpeed, frameCount, dt = 1) {
+        this.x -= gameSpeed * dt;
+        this.y += Math.sin((frameCount + this.bobOffset) * 0.1) * 0.5 * dt; // Bob logic
 
         if (this.x + this.width < 0) {
             this.markedForDeletion = true;
