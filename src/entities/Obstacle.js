@@ -22,12 +22,12 @@ export class Obstacle {
         this.height = this.sprite.height;
     }
 
-    update(gameSpeed, frameCount) {
-        this.x -= gameSpeed;
+    update(gameSpeed, frameCount, dt = 1) {
+        this.x -= gameSpeed * dt;
 
         if (this.type === 'ufo') {
-            this.x -= 2; // UFOs vary speed
-            this.y += Math.sin(frameCount * 0.05) * 2; // Hover effect
+            this.x -= 2 * dt; // UFOs vary speed
+            this.y += Math.sin(frameCount * 0.05) * 2 * dt; // Hover effect
         }
 
         if (this.x + this.width < 0) {
