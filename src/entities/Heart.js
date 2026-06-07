@@ -15,17 +15,17 @@ export class Heart {
         this.growing = true;
     }
 
-    update(gameSpeed) {
-        this.x -= this.speedX + (gameSpeed - GAME_SPEED_START);
+    update(gameSpeed, dt = 1) {
+        this.x -= (this.speedX + (gameSpeed - GAME_SPEED_START)) * dt;
 
         if (this.x + this.width < 0) this.markedForDeletion = true;
 
         // Pulse
         if (this.growing) {
-            this.scale += 0.02;
+            this.scale += 0.02 * dt;
             if (this.scale > 1.3) this.growing = false;
         } else {
-            this.scale -= 0.02;
+            this.scale -= 0.02 * dt;
             if (this.scale < 0.8) this.growing = true;
         }
     }
