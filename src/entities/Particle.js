@@ -9,10 +9,10 @@ export class Particle {
         this.life = 1.0; // Opacity
     }
 
-    update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        this.life -= 0.05;
+    update(dt = 1) {
+        this.x += this.speedX * dt;
+        this.y += this.speedY * dt;
+        this.life -= 0.05 * dt;
     }
 
     draw(ctx) {
