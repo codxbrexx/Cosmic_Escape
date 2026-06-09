@@ -14,8 +14,8 @@ export class Projectile {
         this.color = isEnemy ? '#FF0000' : '#00FFCC';
     }
 
-    update() {
-        this.x += this.speed;
+    update(dt = 1) {
+        this.x += this.speed * dt;
 
         // Despawn if off screen
         if (this.x > CANVAS_WIDTH + 50 || this.x < -50) {
