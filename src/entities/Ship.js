@@ -19,25 +19,25 @@ export class Ship {
     }
 
     // Pass an onCreateParticle callback or the particles array
-    update(particles, frameCount, invulnerableTimer, loseLifeCallback, createExplosionCallback) {
-        // Physics
+    update(particles, frameCount, invulnerableTimer, loseLifeCallback, createExplosionCallback, dt = 1) {
+        // Physics — all forces scaled by dt so they're frame-rate independent
         if (this.thrusting) {
-            this.vy += this.thrust * 0.10; // sensitivity of thrust
+            this.vy += this.thrust * 0.10 * dt; // sensitivity of thrust
             if (frameCount % 3 === 0) {
                 particles.push(new Particle(this.x, this.y + this.height - 10, COLOR_ENGINE, 4, 3));
             }
         }
         // Gravity always applies
-        this.vy += this.gravity;
+        this.vy += this.gravity * dt;
 
-        // Apply Drag (Air Resistance) for smoothness
-        this.vy *= this.drag;
+        // Apply Drag (Air Resistance) — exponentiated so it's dt-correct
+        this.vy *= Math.pow(this.drag, dt);
 
         // Cap speed
         if (this.vy > 8) this.vy = 8;
         if (this.vy < -8) this.vy = -8;
 
-        this.y += this.vy;
+        this.y += this.vy * dt;
 
         // Bounds X (Safety Clamp)
         if (this.x < 0) this.x = 0;

@@ -9,8 +9,8 @@ export class Star {
         this.brightness = Math.random();
     }
 
-    update(gameSpeed) {
-        this.x -= this.speed * (gameSpeed * 0.1);
+    update(gameSpeed, dt = 1) {
+        this.x -= this.speed * (gameSpeed * 0.1) * dt;
         if (this.x < 0) {
             this.x = CANVAS_WIDTH;
             this.y = Math.random() * CANVAS_HEIGHT;
