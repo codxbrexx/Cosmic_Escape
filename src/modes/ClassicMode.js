@@ -21,9 +21,9 @@ export class ClassicMode {
         this.frameCount = 0;
 
         this.ship = new Ship({
-            gravity: 0.25, // Snappy gravity
-            thrust: -6,    // Strong thrust
-            drag: 0.94     // High drag for control
+            gravity: 0.22, // Unified gravity across all modes
+            thrust: -5.5,  // Unified thrust
+            drag: 0.96     // Unified drag
         });
         this.obstacles = [];
         this.coins = []; // Points only
@@ -38,13 +38,13 @@ export class ClassicMode {
     }
 
 
-    handleInput(keys) {
+    handleInput(keys, dt = 1) {
         if (!this.ship) return;
 
-        // Horizontal Movement
+        // Horizontal Movement — scaled by dt for frame-rate independence
         const speed = 8;
-        if (keys['ArrowLeft']) this.ship.x -= speed;
-        if (keys['ArrowRight']) this.ship.x += speed;
+        if (keys['ArrowLeft']) this.ship.x -= speed * dt;
+        if (keys['ArrowRight']) this.ship.x += speed * dt;
 
         // Thrust
         if (keys['ArrowUp'] || keys['Space']) this.ship.thrusting = true;
@@ -55,29 +55,29 @@ export class ClassicMode {
         if (this.ship.x + this.ship.width > CANVAS_WIDTH) this.ship.x = CANVAS_WIDTH - this.ship.width;
     }
 
-    update() {
+    update(dt = 1) {
         this.frameCount++;
-        this.score += 0.1;
+        this.score += 0.1 * dt;
 
         // Accelerate faster in Classic
-        if (this.frameCount % 600 === 0) this.gameSpeed += 0.2; // Slower acceleration (was 300 / 0.5)
+        if (this.frameCount % 600 === 0) this.gameSpeed += 0.2;
 
         // Entities
-        this.ship.update(this.particles, this.frameCount, this.invulnerableTimer, () => this.loseLife(), (x, y, c) => this.createExplosion(x, y, c));
+        this.ship.update(this.particles, this.frameCount, this.invulnerableTimer, () => this.loseLife(), (x, y, c) => this.createExplosion(x, y, c), dt);
 
         if (this.invulnerableTimer > 0) this.invulnerableTimer--;
 
-        this.stars.forEach(s => s.update(this.gameSpeed));
-        this.particles.forEach(p => p.update());
+        this.stars.forEach(s => s.update(this.gameSpeed, dt));
+        this.particles.forEach(p => p.update(dt));
         this.particles = this.particles.filter(p => p.life > 0);
 
         this.spawnObstacle();
         this.spawnCoin();
 
-        this.obstacles.forEach(obs => obs.update(this.gameSpeed, this.frameCount));
+        this.obstacles.forEach(obs => obs.update(this.gameSpeed, this.frameCount, dt));
         this.obstacles = this.obstacles.filter(obs => !obs.markedForDeletion);
 
-        this.coins.forEach(c => c.update(this.gameSpeed, this.frameCount));
+        this.coins.forEach(c => c.update(this.gameSpeed, this.frameCount, dt));
         this.coins = this.coins.filter(c => !c.markedForDeletion);
 
         this.checkCollisions();

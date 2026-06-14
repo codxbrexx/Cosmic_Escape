@@ -19,9 +19,9 @@ export class BossRushMode {
         this.frameCount = 0;
 
         this.ship = new Ship({
-            gravity: 0.15, // Low gravity
-            thrust: -5,    // Gentle thrust
-            drag: 0.99     // High drift (low drag)
+            gravity: 0.22, // Unified gravity across all modes
+            thrust: -5.5,  // Unified thrust
+            drag: 0.96     // Unified drag
         });
 
         // Survival specific
@@ -55,12 +55,12 @@ export class BossRushMode {
         }
     }
 
-    handleInput(keys) {
+    handleInput(keys, dt = 1) {
         if (!this.ship) return;
 
         const speed = 8;
-        if (keys['ArrowLeft']) this.ship.x -= speed;
-        if (keys['ArrowRight']) this.ship.x += speed;
+        if (keys['ArrowLeft']) this.ship.x -= speed * dt;
+        if (keys['ArrowRight']) this.ship.x += speed * dt;
 
         if (keys['ArrowUp'] || keys['Space']) this.ship.thrusting = true;
         else this.ship.thrusting = false;
@@ -77,11 +77,11 @@ export class BossRushMode {
         }
     }
 
-    update() {
+    update(dt = 1) {
         this.frameCount++;
 
-        // Score based on survival time (fast drip)
-        this.score += 0.1; // score speed
+        // Score based on survival time
+        this.score += 0.1 * dt;
 
         // Timer Logic
         if (this.frameCount % 60 === 0) {
@@ -94,18 +94,18 @@ export class BossRushMode {
         this.spawnObstacle();
 
         // Entities Update
-        this.ship.update(this.particles, this.frameCount, this.invulnerableTimer, () => this.loseLife(), (x, y, c) => this.createExplosion(x, y, c));
+        this.ship.update(this.particles, this.frameCount, this.invulnerableTimer, () => this.loseLife(), (x, y, c) => this.createExplosion(x, y, c), dt);
 
         if (this.invulnerableTimer > 0) this.invulnerableTimer--;
 
-        this.stars.forEach(s => s.update(this.gameSpeed));
-        this.particles.forEach(p => p.update());
+        this.stars.forEach(s => s.update(this.gameSpeed, dt));
+        this.particles.forEach(p => p.update(dt));
         this.particles = this.particles.filter(p => p.life > 0);
 
-        this.obstacles.forEach(obs => obs.update(this.gameSpeed, this.frameCount));
+        this.obstacles.forEach(obs => obs.update(this.gameSpeed, this.frameCount, dt));
         this.obstacles = this.obstacles.filter(obs => !obs.markedForDeletion);
 
-        this.bullets.forEach(b => b.update());
+        this.bullets.forEach(b => b.update(dt));
         this.bullets = this.bullets.filter(b => !b.markedForDeletion);
 
         this.checkCollisions();

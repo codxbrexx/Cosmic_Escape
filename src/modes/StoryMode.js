@@ -29,9 +29,9 @@ export class StoryMode {
         this.coinsCollected = 0;
 
         this.ship = new Ship({
-            gravity: 0.22, // Balanced
-            thrust: -5,
-            drag: 0.95 
+            gravity: 0.22, // Unified gravity across all modes
+            thrust: -5.5,  // Unified thrust
+            drag: 0.96     // Unified drag
         });
         this.obstacles = [];
         this.coins = [];
@@ -54,13 +54,13 @@ export class StoryMode {
         this.updateEnvironment();
     }
 
-    handleInput(keys) {
+    handleInput(keys, dt = 1) {
         if (!this.ship) return;
 
-        // Horizontal Movement
+        // Horizontal Movement — scaled by dt
         const speed = 8;
-        if (keys['ArrowLeft']) this.ship.x -= speed;
-        if (keys['ArrowRight']) this.ship.x += speed;
+        if (keys['ArrowLeft']) this.ship.x -= speed * dt;
+        if (keys['ArrowRight']) this.ship.x += speed * dt;
 
         // Thrust
         if (keys['ArrowUp'] || keys['Space']) this.ship.thrusting = true;
@@ -88,9 +88,9 @@ export class StoryMode {
         }
     }
 
-    update() {
+    update(dt = 1) {
         this.frameCount++;
-        this.score += 0.1;
+        this.score += 0.1 * dt;
 
         // Heart Spawning (Every 500 score)
         if (this.score - this.lastHeartScore >= 500) {
@@ -107,8 +107,7 @@ export class StoryMode {
         // Level Up Logic (If no boss)
         if (!this.boss && this.score >= this.level * 1000) {
             this.level++;
-            this.gameSpeed += 0.1; // Slower acceleration (was 0.2)
-            // Upgrade Fire Rate
+            this.gameSpeed += 0.1;
             this.fireRateCoodown = Math.max(5, 15 - this.level);
             this.updateEnvironment();
             this.createExplosion(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, '#FFF', 50);
@@ -126,31 +125,31 @@ export class StoryMode {
         }
 
         // Entities Update
-        this.ship.update(this.particles, this.frameCount, this.invulnerableTimer, () => this.loseLife(), (x, y, c) => this.createExplosion(x, y, c));
+        this.ship.update(this.particles, this.frameCount, this.invulnerableTimer, () => this.loseLife(), (x, y, c) => this.createExplosion(x, y, c), dt);
 
         if (this.invulnerableTimer > 0) this.invulnerableTimer--;
 
-        this.stars.forEach(s => s.update(this.gameSpeed));
-        this.particles.forEach(p => p.update());
+        this.stars.forEach(s => s.update(this.gameSpeed, dt));
+        this.particles.forEach(p => p.update(dt));
         this.particles = this.particles.filter(p => p.life > 0);
 
         this.spawnObstacle();
         this.spawnCoin();
 
-        this.obstacles.forEach(obs => obs.update(this.gameSpeed, this.frameCount));
+        this.obstacles.forEach(obs => obs.update(this.gameSpeed, this.frameCount, dt));
         this.obstacles = this.obstacles.filter(obs => !obs.markedForDeletion);
 
-        this.coins.forEach(c => c.update(this.gameSpeed, this.frameCount));
+        this.coins.forEach(c => c.update(this.gameSpeed, this.frameCount, dt));
         this.coins = this.coins.filter(c => !c.markedForDeletion);
 
-        this.hearts.forEach(h => h.update(this.gameSpeed));
+        this.hearts.forEach(h => h.update(this.gameSpeed, dt));
         this.hearts = this.hearts.filter(h => !h.markedForDeletion);
 
-        this.bullets.forEach(b => b.update());
+        this.bullets.forEach(b => b.update(dt));
         this.bullets = this.bullets.filter(b => !b.markedForDeletion);
 
         if (this.boss) {
-            this.boss.update(this.bullets, this.ship);
+            this.boss.update(this.bullets, this.ship, dt);
             this.checkBossCollisions();
         }
 
