@@ -26,12 +26,12 @@
     <link rel="manifest" href="./manifest.webmanifest">
     <title>Cosmic Escape — Retro Arcade Space Evasion</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-B7cCtDgX.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/firebase-core-I-lAixPP.js">
-  <link rel="modulepreload" crossorigin href="./assets/firebase-auth-DroCJS6a.js">
-  <link rel="modulepreload" crossorigin href="./assets/firebase-firestore-C7QFbm_x.js">
+  <script type="module" crossorigin src="./assets/index-BS5tQnbZ.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/firebase-core-BqKdfcWm.js">
+  <link rel="modulepreload" crossorigin href="./assets/firebase-auth-CTxhcm1W.js">
+  <link rel="modulepreload" crossorigin href="./assets/firebase-firestore-BUacSVNt.js">
   <link rel="modulepreload" crossorigin href="./assets/gsap-CB87Sc6I.js">
-  <link rel="stylesheet" crossorigin href="./assets/index-CW7_7zCy.css">
+  <link rel="stylesheet" crossorigin href="./assets/index-Bc_d5oNO.css">
 </head>
 
 <body
@@ -45,97 +45,155 @@
 
     <!-- Main Game Container -->
     <div id="game-container"
-        class="relative w-full max-w-[1200px] aspect-[2/1] max-h-[100dvh] border-2 sm:border-4 border-white overflow-hidden transition-colors duration-500 bg-black shadow-[0_0_30px_rgba(255,255,255,0.15)] flex items-center justify-center">
+        class="cockpit-frame relative w-full max-w-[1200px] aspect-[2/1] max-h-[100dvh] overflow-hidden transition-colors duration-500 bg-black flex items-center justify-center">
         
-        <!-- Auth Profile Badge (Top Left in Menu) -->
-        <div id="pilot-profile-badge" class="absolute top-2 sm:top-3 left-2 sm:left-4 z-40 flex items-center gap-2 bg-white/10 backdrop-blur-md px-2.5 py-1.5 border border-white/30 rounded text-[8px] sm:text-[9px]">
-            <img id="pilot-avatar" class="hidden w-4 h-4 sm:w-5 sm:h-5 rounded-full border border-white/60 object-cover" alt="Avatar">
-            <span id="pilot-icon" class="text-xs">🧑‍🚀</span>
-            <span id="pilot-name" class="text-cyan-300 tracking-wider font-bold">PILOT-777</span>
-            <button id="btn-auth-action" class="ml-1 px-1.5 py-0.5 bg-black text-white border border-white/40 hover:bg-white hover:text-black transition-all text-[7px] sm:text-[8px] rounded uppercase cursor-pointer">
-                LOGIN
-            </button>
+        <!-- Cockpit Corner Brackets -->
+        <div class="corner-bracket corner-tl"></div>
+        <div class="corner-bracket corner-tr"></div>
+        <div class="corner-bracket corner-bl"></div>
+        <div class="corner-bracket corner-br"></div>
+
+        <!-- Authentic Arcade CRT Scanlines -->
+        <div class="scanlines-overlay"></div>
+
+        <!-- Cockpit Top Bar in Menu (Pilot Profile + Action Docks) -->
+        <div id="menu-top-bar" class="absolute top-2 sm:top-3.5 left-2 sm:left-4 right-2 sm:right-4 z-40 flex items-center justify-between pointer-events-none">
+            <!-- Pilot Profile Badge -->
+            <div id="pilot-profile-badge" class="hud-glass-badge pointer-events-auto flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded text-[7px] sm:text-[9px]">
+                <img id="pilot-avatar" class="hidden w-4 h-4 sm:w-5 sm:h-5 rounded-full border border-white/60 object-cover" alt="Avatar">
+                <span id="pilot-icon" class="text-xs">🧑‍🚀</span>
+                <span id="pilot-name" class="text-cyan-300 tracking-wider font-bold">PILOT-777</span>
+                <button id="btn-auth-action" class="ml-1 px-1.5 py-0.5 bg-white/10 hover:bg-white hover:text-black border border-white/30 text-white transition-all text-[6px] sm:text-[8px] rounded uppercase cursor-pointer">
+                    LOGIN
+                </button>
+            </div>
+
+            <!-- Cockpit Utility Dock -->
+            <div class="pointer-events-auto flex items-center gap-1 sm:gap-2">
+                <button id="btn-open-hangar"
+                    class="hud-glass-badge font-press-start px-2 sm:px-3 py-1 sm:py-1.5 text-cyan-300 border-cyan-400/50 hover:border-cyan-300 hover:bg-cyan-500/20 cursor-pointer transition-all uppercase text-[7px] sm:text-[9px] flex items-center gap-1.5 rounded">
+                    <span>🛸</span>
+                    <span class="hidden xs:inline">HANGAR</span>
+                    <span class="px-1 py-0.5 bg-yellow-400/20 text-yellow-300 border border-yellow-400/40 rounded text-[6px] sm:text-[7px] flex items-center gap-0.5">
+                        🪙 <span id="menu-coin-count">0</span>
+                    </span>
+                </button>
+                <button id="btn-open-leaderboard"
+                    class="hud-glass-badge font-press-start px-2 sm:px-3 py-1 sm:py-1.5 text-yellow-300 border-yellow-400/50 hover:border-yellow-300 hover:bg-yellow-500/20 cursor-pointer transition-all uppercase text-[7px] sm:text-[9px] flex items-center gap-1 rounded">
+                    <span>🏆</span>
+                    <span class="hidden xs:inline">RANKS</span>
+                </button>
+                <button id="btn-about"
+                    class="hud-glass-badge font-press-start px-2 sm:px-2.5 py-1 sm:py-1.5 text-white/80 hover:text-white hover:border-white cursor-pointer transition-all uppercase text-[7px] sm:text-[9px] rounded">
+                    INTEL
+                </button>
+                <button class="btn-audio-toggle hud-glass-badge font-press-start px-2 py-1 text-white hover:border-cyan-300 cursor-pointer text-xs rounded" title="Toggle Audio">
+                    🔊
+                </button>
+                <button id="btn-fullscreen-menu" class="btn-fullscreen hud-glass-badge font-press-start px-2 py-1 text-white hover:border-cyan-300 cursor-pointer text-xs rounded" title="Toggle Fullscreen">
+                    ⛶
+                </button>
+            </div>
         </div>
 
         <!-- Start Menu -->
         <div id="start-menu"
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] sm:w-[85%] md:w-[600px] h-auto flex flex-col justify-center items-center text-center z-30 py-2 sm:py-5">
-            <h1 class="title text-2xl sm:text-4xl md:text-[52px] leading-tight mb-1 sm:mb-2 text-cosmic-text tracking-widest text-shadow-lg">
-                COSMIC<br>ESCAPE</h1>
-            <p class="subtitle text-[8px] sm:text-[10px] md:text-[12px] text-cosmic-muted mb-3 sm:mb-4 tracking-[3px] uppercase">
-                CHOOSE YOUR MISSION</p>
-
-            <button id="btn-classic"
-                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-2.5 sm:py-3.5 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-1 hover:bg-white hover:text-black active:bg-gray-300">
-                CLASSIC ARCADE
-            </button>
-            <button id="btn-story"
-                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-2.5 sm:py-3.5 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-1.5 hover:bg-white hover:text-black active:bg-gray-300">
-                GALACTIC ODYSSEY
-            </button>
-            <button id="btn-bossrush"
-                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-2.5 sm:py-3.5 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-1.5 hover:bg-white hover:text-black active:bg-green-800">
-                SURVIVAL PROTOCOL
-            </button>
+            class="absolute inset-0 flex flex-col justify-center items-center text-center z-30 px-3 sm:px-6 pt-10 pb-4">
+            
+            <!-- Hero Title -->
+            <h1 class="title text-2xl sm:text-4xl md:text-5xl leading-tight mb-0.5 text-white tracking-widest text-shadow-lg neon-glow-cyan animate-pulse">
+                COSMIC<br>ESCAPE
+            </h1>
+            <p class="subtitle text-[7px] sm:text-[8px] md:text-[10px] text-cyan-300/80 mb-2 sm:mb-2.5 tracking-[3px] uppercase">
+                TACTICAL DEEP-SPACE EVASION
+            </p>
 
             <!-- Marquee Galaxy Champion Banner -->
-            <div id="galaxy-champion-ticker" class="cursor-pointer mt-2.5 sm:mt-3 px-3 py-1 bg-yellow-400/10 border border-yellow-400/40 rounded text-[7px] sm:text-[9px] text-yellow-300 tracking-wider flex items-center gap-1.5 hover:bg-yellow-400/20 transition-all">
-                <span>👑</span>
+            <div id="galaxy-champion-ticker" class="cursor-pointer mb-2.5 sm:mb-3 px-3 py-1 bg-yellow-400/10 border border-yellow-400/40 rounded-full text-[7px] sm:text-[8px] text-yellow-300 tracking-wider flex items-center gap-1.5 hover:bg-yellow-400/20 transition-all shadow-[0_0_15px_rgba(255,215,0,0.15)]">
+                <span class="animate-bounce">👑</span>
                 <span id="ticker-text">GALAXY CHAMPION: LOADING...</span>
+                <span class="text-xs">›</span>
             </div>
 
-            <div class="flex flex-wrap justify-center items-center gap-2 sm:gap-2.5 mt-3 sm:mt-4">
-                <button id="btn-open-hangar"
-                    class="mode-btn font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-cyan-400 border border-cyan-400/80 cursor-pointer transition-all uppercase hover:bg-cyan-400 hover:text-black text-[8px] sm:text-[10px]">
-                    🛸 HANGAR
+            <!-- Mission Selection Deck (3 Cards Grid) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 w-full max-w-[850px] mb-2 sm:mb-3 px-1">
+                <!-- Card 1: Classic Arcade -->
+                <button id="btn-classic" class="mission-card theme-classic p-2.5 sm:p-3 rounded flex flex-col justify-between group cursor-pointer border-cyan-400/40">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-base sm:text-xl">⚡</span>
+                        <span class="text-[6px] sm:text-[7px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-400/30">ENDLESS</span>
+                    </div>
+                    <div>
+                        <div class="text-[9px] sm:text-[11px] font-bold text-white group-hover:text-cyan-300 transition-colors">CLASSIC ARCADE</div>
+                        <div class="text-[6px] sm:text-[7px] text-gray-400 mt-0.5 leading-snug">Dodge asteroids & UFOs. Dynamic hyperdrive speed.</div>
+                    </div>
                 </button>
-                <button id="btn-open-leaderboard"
-                    class="mode-btn font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-yellow-400 border border-yellow-400/80 cursor-pointer transition-all uppercase hover:bg-yellow-400 hover:text-black text-[8px] sm:text-[10px]">
-                    🏆 RANKS
+
+                <!-- Card 2: Galactic Odyssey -->
+                <button id="btn-story" class="mission-card theme-story p-2.5 sm:p-3 rounded flex flex-col justify-between group cursor-pointer border-fuchsia-400/40">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-base sm:text-xl">🌌</span>
+                        <span class="text-[6px] sm:text-[7px] px-1.5 py-0.5 rounded bg-fuchsia-500/20 text-fuchsia-300 font-bold border border-fuchsia-400/30">CAMPAIGN</span>
+                    </div>
+                    <div>
+                        <div class="text-[9px] sm:text-[11px] font-bold text-white group-hover:text-fuchsia-300 transition-colors">GALACTIC ODYSSEY</div>
+                        <div class="text-[6px] sm:text-[7px] text-gray-400 mt-0.5 leading-snug">Warp across sectors. Coin rewards & Mothership.</div>
+                    </div>
                 </button>
-                <button id="btn-about"
-                    class="mode-btn font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-white border border-white cursor-pointer transition-all uppercase hover:bg-white hover:text-black text-[8px] sm:text-[10px]">
-                    INTEL
+
+                <!-- Card 3: Survival Protocol -->
+                <button id="btn-bossrush" class="mission-card theme-boss p-2.5 sm:p-3 rounded flex flex-col justify-between group cursor-pointer border-amber-400/40">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-base sm:text-xl">🛡️</span>
+                        <span class="text-[6px] sm:text-[7px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold border border-amber-400/30">30S SURVIVAL</span>
+                    </div>
+                    <div>
+                        <div class="text-[9px] sm:text-[11px] font-bold text-white group-hover:text-amber-300 transition-colors">SURVIVAL PROTOCOL</div>
+                        <div class="text-[6px] sm:text-[7px] text-gray-400 mt-0.5 leading-snug">Survive the countdown. Overload EMP core!</div>
+                    </div>
                 </button>
-                <button class="btn-audio-toggle font-press-start px-2 sm:px-2.5 py-1.5 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black text-xs sm:text-sm" title="Toggle Audio">
-                    🔊
-                </button>
-                <button id="btn-fullscreen-menu" class="btn-fullscreen font-press-start px-2 sm:px-2.5 py-1.5 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black text-xs sm:text-sm" title="Toggle Fullscreen">
-                    ⛶
-                </button>
+            </div>
+
+            <!-- Footer Controls Hint -->
+            <div class="text-[7px] sm:text-[8px] text-gray-500 tracking-wider">
+                <span class="hidden sm:inline">[SPACE] OR [▲] THRUST • [◀][▶] STEER • [P] PAUSE</span>
+                <span class="sm:hidden">TAP OR SLIDE TO FLY • STEER WITH BUTTONS</span>
             </div>
         </div>
 
-        <!-- HUD Top -->
+        <!-- HUD Top (In-Game Flight Visor) -->
         <div id="hud-top"
-            class="absolute top-2 sm:top-3 md:top-4 left-2 sm:left-4 right-2 sm:right-4 flex justify-between items-start z-10 pointer-events-none">
+            class="hidden absolute top-2 sm:top-3.5 left-2 sm:left-4 right-2 sm:right-4 flex justify-between items-center z-10 pointer-events-none">
             
-            <!-- Left HUD: Lives & Coins -->
-            <div id="hud-left" class="flex flex-col gap-0.5 sm:gap-1.5 pointer-events-auto">
-                <div id="hearts" class="text-xs sm:text-base md:text-[20px] text-[#FF0044] tracking-wider">❤️❤️❤️</div>
-                <div id="coin-display" class="text-[9px] sm:text-xs md:text-sm text-cosmic-gold hidden drop-shadow">🪙 <span id="coin-count">0</span></div>
+            <!-- Left HUD: Lives & Coins Badge -->
+            <div id="hud-left" class="hud-glass-badge px-2.5 py-1.5 rounded flex items-center gap-2 sm:gap-3 pointer-events-auto">
+                <div id="hearts" class="text-xs sm:text-sm text-[#FF0044] tracking-wider font-bold">❤️❤️❤️</div>
+                <div class="w-[1px] h-3 bg-white/20"></div>
+                <div id="coin-display" class="text-[8px] sm:text-[10px] text-cosmic-gold drop-shadow flex items-center gap-1 font-bold">
+                    <span>🪙</span><span id="coin-count">0</span>
+                </div>
             </div>
 
-            <!-- Center HUD: Audio, Pause & Fullscreen Buttons -->
+            <!-- Center HUD: Level / Sector Indicator & Quick Controls -->
             <div class="flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
-                <button id="mobile-pause-btn" class="font-press-start text-[9px] sm:text-[10px] px-2 py-1 bg-black/80 text-white border border-white/60 hover:border-white rounded cursor-pointer touch-manipulation" title="Pause Game">
+                <div id="level-display" class="hud-glass-badge px-2.5 py-1 rounded text-cyan-300 text-[8px] sm:text-[10px] tracking-[1px] font-bold">
+                    LEVEL 1
+                </div>
+                <button id="mobile-pause-btn" class="hud-glass-badge font-press-start text-[8px] sm:text-[9px] px-2 py-1 text-white hover:border-cyan-300 rounded cursor-pointer touch-manipulation transition-all" title="Pause Game">
                     ⏸️
                 </button>
-                <button class="btn-audio-toggle font-press-start text-[9px] sm:text-[10px] px-2 py-1 bg-black/80 text-white border border-white/60 hover:border-white rounded cursor-pointer touch-manipulation" title="Toggle Audio">
+                <button class="btn-audio-toggle hud-glass-badge font-press-start text-[8px] sm:text-[9px] px-2 py-1 text-white hover:border-cyan-300 rounded cursor-pointer touch-manipulation transition-all" title="Toggle Audio">
                     🔊
                 </button>
-                <button class="btn-fullscreen font-press-start text-[9px] sm:text-[10px] px-2 py-1 bg-black/80 text-white border border-white/60 hover:border-white rounded cursor-pointer touch-manipulation" title="Fullscreen">
+                <button class="btn-fullscreen hud-glass-badge font-press-start text-[8px] sm:text-[9px] px-2 py-1 text-white hover:border-cyan-300 rounded cursor-pointer touch-manipulation transition-all" title="Fullscreen">
                     ⛶
                 </button>
             </div>
 
-            <!-- Right HUD: Score & High Score -->
-            <div id="score-container" class="text-right pointer-events-auto">
-                <div id="level-display"
-                    class="text-cosmic-muted text-[8px] sm:text-[10px] md:text-[11px] mb-0.5 tracking-[1px] sm:tracking-[2px]">LEVEL 1
-                </div>
-                <div id="high-score" class="text-[#888] text-[7px] sm:text-[9px] md:text-[10px]">HI: 00000</div>
-                <div id="score" class="text-cosmic-text text-sm sm:text-lg md:text-[22px] tracking-wider">00000</div>
+            <!-- Right HUD: Score & High Score Readout -->
+            <div id="score-container" class="hud-glass-badge px-2.5 py-1.5 rounded text-right pointer-events-auto flex flex-col items-end">
+                <div id="high-score" class="text-gray-400 text-[6px] sm:text-[8px] tracking-wider">HI: 00000</div>
+                <div id="score" class="text-cyan-300 text-xs sm:text-base md:text-lg tracking-widest font-bold neon-glow-cyan">00000</div>
             </div>
         </div>
 
