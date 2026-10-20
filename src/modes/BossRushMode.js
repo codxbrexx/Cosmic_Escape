@@ -1,53 +1,24 @@
-import { Ship } from '../entities/Ship.js';
+import { BaseMode } from './BaseMode.js';
 import { Obstacle } from '../entities/Obstacle.js';
-import { Star } from '../entities/Star.js';
-import { Particle } from '../entities/Particle.js';
-import {
-    CANVAS_WIDTH, CANVAS_HEIGHT, GAME_SPEED_START, COLOR_ASTEROID
-} from '../constants.js';
+import { Coin } from '../entities/Coin.js';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, COLOR_ASTEROID } from '../constants.js';
+import { sounds } from '../utils/SoundManager.js';
 
-export class BossRushMode {
+export class BossRushMode extends BaseMode {
     constructor(ctx, onGameOver) {
-        this.ctx = ctx;
-        this.onGameOver = onGameOver;
+        super(ctx, onGameOver, 'BOSS_RUSH');
 
         this.level = 1;
-        this.gameSpeed = GAME_SPEED_START;
-        this.score = 0;
-        this.highScore = localStorage.getItem('survivalHighScore') || 0;
-        this.lives = 4;
-        this.frameCount = 0;
-
-        this.ship = new Ship({
-            gravity: 0.22, // Unified gravity across all modes
-            thrust: -5.5,  // Unified thrust
-            drag: 0.96     // Unified drag
-        });
-
-        // Survival specific
-        this.survivalTimeLeft = 30; // Seconds
-
-        this.particles = [];
-        this.stars = [];
-        this.obstacles = [];
-        this.bullets = []; // Ship bullets
-
-        this.invulnerableTimer = 0;
-        this.lastShotTime = 0;
-        this.fireRateCoodown = 15; // Moderate fire rate
-
-        // Init Stars
-        for (let i = 0; i < 150; i++) this.stars.push(new Star());
-
-        this.startLevel();
+        this.lives = 3;
+        this.survivalTimeLeft = 30; // Seconds per stage
+        this.startLevelAnnouncement();
     }
 
-    startLevel() {
-        // Show Announcement (Small)
+    startLevelAnnouncement() {
         const announcement = document.getElementById('level-announcement');
         const announcementText = document.getElementById('level-announcement-text');
         if (announcement && announcementText) {
-            announcementText.innerText = "SURVIVE LVL " + this.level;
+            announcementText.innerText = `SURVIVE WAVE ${this.level}`;
             announcement.classList.remove('hidden');
             setTimeout(() => {
                 announcement.classList.add('hidden');
@@ -55,111 +26,71 @@ export class BossRushMode {
         }
     }
 
-    handleInput(keys, dt = 1) {
-        if (!this.ship) return;
-
-        const speed = 8;
-        if (keys['ArrowLeft']) this.ship.x -= speed * dt;
-        if (keys['ArrowRight']) this.ship.x += speed * dt;
-
-        if (keys['ArrowUp'] || keys['Space']) this.ship.thrusting = true;
-        else this.ship.thrusting = false;
-
-        if (this.ship.x < 0) this.ship.x = 0;
-        if (this.ship.x + this.ship.width > CANVAS_WIDTH) this.ship.x = CANVAS_WIDTH - this.ship.width;
-
-        // SHOOTING ENABLED
-        if (keys['KeyF'] || keys['ControlLeft'] || keys['KeyZ']) {
-            if (this.frameCount - this.lastShotTime > this.fireRateCoodown) {
-                this.ship.shoot(this.bullets);
-                this.lastShotTime = this.frameCount;
-            }
-        }
-    }
-
     update(dt = 1) {
-        this.frameCount++;
+        this.updateBase(dt);
 
-        // Score based on survival time
-        this.score += 0.1 * dt;
-
-        // Timer Logic
+        // Survival Timer Logic
         if (this.frameCount % 60 === 0) {
             this.survivalTimeLeft--;
             if (this.survivalTimeLeft <= 0) {
-                this.completeLevel();
+                this.completeWave();
             }
         }
 
         this.spawnObstacle();
-
-        // Entities Update
-        this.ship.update(this.particles, this.frameCount, this.invulnerableTimer, () => this.loseLife(), (x, y, c) => this.createExplosion(x, y, c), dt);
-
-        if (this.invulnerableTimer > 0) this.invulnerableTimer--;
-
-        this.stars.forEach(s => s.update(this.gameSpeed, dt));
-        this.particles.forEach(p => p.update(dt));
-        this.particles = this.particles.filter(p => p.life > 0);
-
-        this.obstacles.forEach(obs => obs.update(this.gameSpeed, this.frameCount, dt));
-        this.obstacles = this.obstacles.filter(obs => !obs.markedForDeletion);
-
-        this.bullets.forEach(b => b.update(dt));
-        this.bullets = this.bullets.filter(b => !b.markedForDeletion);
+        this.spawnCoin();
 
         this.checkCollisions();
     }
 
-    completeLevel() {
+    completeWave() {
         this.level++;
-        this.score += 3000;
+        this.addScore(3000);
         this.survivalTimeLeft = 30;
 
-        if (this.lives < 6) this.lives++;
+        // Recover 1 life on survival milestone (max 5)
+        if (this.lives < 5) {
+            this.lives++;
+        }
 
-        this.gameSpeed += 0.5;
+        this.gameSpeed += 0.4;
+        sounds.playSectorClear();
+        this.createExplosion(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, '#00FF88', 60);
+        this.addFloatingText(CANVAS_WIDTH / 2 - 120, CANVAS_HEIGHT / 2, `WAVE ${this.level - 1} CLEAR! +3000`, '#00FF88', 14);
 
-        this.createExplosion(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, '#128b67ff', 100);
-        this.startLevel();
+        this.startLevelAnnouncement();
     }
 
     draw() {
         this.ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-        // Simple Deep Green Background
+        // Sleek Deep Void/Green gradient background for Survival
         const bgGradient = this.ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
-        bgGradient.addColorStop(0, '#001100');
-        bgGradient.addColorStop(1, '#002200');
+        bgGradient.addColorStop(0, '#000804');
+        bgGradient.addColorStop(1, '#001a0e');
         this.ctx.fillStyle = bgGradient;
         this.ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-        this.stars.forEach(s => s.draw(this.ctx));
-        this.particles.forEach(p => p.draw(this.ctx));
-        this.obstacles.forEach(obs => obs.draw(this.ctx));
-        this.bullets.forEach(b => b.draw(this.ctx));
-
-        if (this.ship) {
-            if (this.invulnerableTimer > 0 && Math.floor(this.frameCount / 4) % 2 === 0) {
-            } else {
-                this.ship.draw(this.ctx);
-            }
-        }
+        this.drawBase();
     }
 
     spawnObstacle() {
-        // REDUCED Difficulty: Lower base chance
-        const difficulty = Math.min(0.12, 0.02 + (this.level * 0.003));
+        if (this.obstacles.length > 0) {
+            const lastObs = this.obstacles[this.obstacles.length - 1];
+            if (CANVAS_WIDTH - lastObs.x < 240) return;
+        }
 
+        const difficulty = Math.min(0.08, 0.025 + (this.level * 0.005));
         if (Math.random() < difficulty) {
-            const type = Math.random() > 0.7 ? 'ufo' : 'asteroid';
+            const type = Math.random() > 0.65 ? 'ufo' : 'asteroid';
             this.obstacles.push(new Obstacle(type));
         }
     }
 
-    createExplosion(x, y, color, count = 10) {
-        for (let i = 0; i < count; i++) {
-            this.particles.push(new Particle(x, y, color, 10, 5));
+    spawnCoin() {
+        // High-risk bonus coins
+        if (Math.random() < 0.008) {
+            this.coins.push(new Coin());
         }
     }
 
@@ -170,56 +101,27 @@ export class BossRushMode {
                 if (this.invulnerableTimer <= 0) {
                     this.loseLife();
                     obs.markedForDeletion = true;
-                    this.createExplosion(obs.x, obs.y, COLOR_ASTEROID, 15);
+                    this.createExplosion(obs.x + obs.width / 2, obs.y + obs.height / 2, COLOR_ASTEROID, 18);
                 }
             }
         });
 
-        // Bullets vs Obstacles
-        this.bullets.forEach(b => {
-            this.obstacles.forEach(obs => {
-                if (!obs.markedForDeletion && !b.markedForDeletion && this.checkCollision(b, obs)) {
-                    obs.markedForDeletion = true;
-                    b.markedForDeletion = true;
-                    this.score += 50;
-                    this.createExplosion(obs.x, obs.y, '#FFAA00', 8);
-                }
-            });
-        });
-    }
-
-    checkCollision(rect1, rect2) {
-        let padding = 10;
-        return (
-            rect1.x < rect2.x + rect2.width - padding &&
-            rect1.x + rect1.width - padding > rect2.x &&
-            rect1.y < rect2.y + rect2.height - padding &&
-            rect1.y + rect1.height - padding > rect2.y
-        );
-    }
-
-    loseLife() {
-        this.lives--;
-        this.invulnerableTimer = 60;
-        this.createExplosion(this.ship.x + this.ship.width / 2, this.ship.y + this.ship.height / 2, '#FF0000', 20);
-
-        if (this.lives <= 0) {
-            if (this.score > this.highScore) {
-                this.highScore = this.score;
-                localStorage.setItem('survivalHighScore', this.highScore);
+        // Coins vs Ship
+        this.coins.forEach(c => {
+            if (this.checkCollision(this.ship, c)) {
+                this.collectCoin(c);
             }
-            this.onGameOver({ score: this.score, mode: 'SURVIVAL' });
-        }
+        });
     }
 
     getHUDData() {
         return {
             lives: this.lives,
             score: Math.floor(this.score),
-            highScore: "HI: " + Math.floor(this.highScore),
-            label: "TIME: " + this.survivalTimeLeft + "s",
-            labelColor: "#00ff00ff",
-            coins: null
+            highScore: `HI: ${this.highScore}`,
+            label: `TIME: ${this.survivalTimeLeft}s`,
+            labelColor: "#00FF88",
+            coins: this.coinsCollected
         };
     }
 }

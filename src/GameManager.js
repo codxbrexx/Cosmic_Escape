@@ -1,8 +1,10 @@
 import { StoryMode } from './modes/StoryMode.js';
 import { ClassicMode } from './modes/ClassicMode.js';
 import { BossRushMode } from './modes/BossRushMode.js';
-import gsap from 'gsap';
+import { Star } from './entities/Star.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants.js';
+import { sounds } from './utils/SoundManager.js';
+import gsap from 'gsap';
 
 export class GameManager {
     constructor(ctx) {
@@ -11,47 +13,111 @@ export class GameManager {
         this.isRunning = false;
         this.isPaused = false;
         this.isCountingDown = false;
+        this._lastTimestamp = 0;
 
-        // Global Input
+        // Background menu stars
+        this.menuStars = [];
+        for (let i = 0; i < 150; i++) {
+            this.menuStars.push(new Star());
+        }
+
+        // Global Keyboard Input
         this.keys = {};
         window.addEventListener('keydown', (e) => {
+            sounds.ensureContext();
             this.keys[e.code] = true;
             if (e.code === 'Escape' || e.code === 'KeyP') {
                 this.togglePause();
             }
         });
-        window.addEventListener('keyup', (e) => this.keys[e.code] = false);
+        window.addEventListener('keyup', (e) => {
+            this.keys[e.code] = false;
+        });
 
         this.setupUI();
+        this.setupAudioToggle();
+        this.startMenuLoop();
+    }
+
+    setupAudioToggle() {
+        const updateAudioIcons = () => {
+            const isMuted = sounds.isMuted();
+            const icon = isMuted ? '🔇' : '🔊';
+            const audioBtns = document.querySelectorAll('.btn-audio-toggle');
+            audioBtns.forEach(btn => {
+                btn.innerText = icon;
+                btn.title = isMuted ? 'Unmute Audio' : 'Mute Audio';
+            });
+        };
+
+        const toggleSound = (e) => {
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+            sounds.ensureContext();
+            sounds.toggleMute();
+            updateAudioIcons();
+            if (!sounds.isMuted()) {
+                sounds.playClick();
+            }
+        };
+
+        document.querySelectorAll('.btn-audio-toggle').forEach(btn => {
+            btn.addEventListener('click', toggleSound);
+        });
+
+        updateAudioIcons();
     }
 
     setupUI() {
-        // Resume & Quit (Pause Menu)
-        document.getElementById('btn-resume').addEventListener('click', () => this.togglePause());
-        document.getElementById('btn-quit').addEventListener('click', () => this.resetToMenu());
+        // Pause Menu Handlers
+        document.getElementById('btn-resume').addEventListener('click', () => {
+            sounds.playClick();
+            this.togglePause();
+        });
+        document.getElementById('btn-quit').addEventListener('click', () => {
+            sounds.playClick();
+            this.resetToMenu();
+        });
 
-        // Mode Selection
-        document.getElementById('btn-classic').addEventListener('click', () => this.startMode('CLASSIC'));
-        document.getElementById('btn-story').addEventListener('click', () => this.startMode('STORY'));
-        document.getElementById('btn-bossrush').addEventListener('click', () => this.startMode('BOSS_RUSH'));
+        // Mode Selection Handlers
+        document.getElementById('btn-classic').addEventListener('click', () => {
+            sounds.playClick();
+            this.startMode('CLASSIC');
+        });
+        document.getElementById('btn-story').addEventListener('click', () => {
+            sounds.playClick();
+            this.startMode('STORY');
+        });
+        document.getElementById('btn-bossrush').addEventListener('click', () => {
+            sounds.playClick();
+            this.startMode('BOSS_RUSH');
+        });
+
+        // About Modal Handlers
         document.getElementById('btn-about').addEventListener('click', () => {
+            sounds.playClick();
             document.getElementById('about-modal').classList.remove('hidden');
         });
         document.getElementById('btn-close-about').addEventListener('click', () => {
+            sounds.playClick();
             document.getElementById('about-modal').classList.add('hidden');
         });
 
-        // Game Over Buttons
+        // Game Over Handlers
         document.getElementById('btn-relaunch').addEventListener('click', () => {
-            // Restart current mode
+            sounds.playClick();
             let currentModeType = 'CLASSIC';
             if (this.activeMode instanceof StoryMode) currentModeType = 'STORY';
             if (this.activeMode instanceof BossRushMode) currentModeType = 'BOSS_RUSH';
-
             this.startMode(currentModeType);
         });
 
-        document.getElementById('btn-return-menu').addEventListener('click', () => this.resetToMenu());
+        document.getElementById('btn-return-menu').addEventListener('click', () => {
+            sounds.playClick();
+            this.resetToMenu();
+        });
 
         // Mobile Controls
         this.setupMobileControls();
@@ -59,108 +125,91 @@ export class GameManager {
 
     setupMobileControls() {
         const gameContainer = document.getElementById('game-container');
+        let touchStartX = 0;
 
-        // Touch Handlers for the entire game area
-        const handleTouch = (e) => {
-            // Only handle game inputs if the game is actually running
-            if (!this.isRunning) return;
+        const handleTouchStart = (e) => {
+            if (!this.isRunning || this.isPaused || this.isCountingDown) return;
+            sounds.ensureContext();
+
+            // Ignore touches on UI buttons
+            if (e.target.closest('button')) return;
 
             e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
 
-            // Reset keys handled by touch
-            this.keys['ArrowLeft'] = false;
-            this.keys['ArrowRight'] = false;
-            this.keys['KeyF'] = false;
-            this.keys['ArrowUp'] = false;
-
-            // Analyze all active touches
-            for (let i = 0; i < e.touches.length; i++) {
-                const touch = e.touches[i];
-                const rect = gameContainer.getBoundingClientRect();
-                const x = touch.clientX - rect.left;
-                const width = rect.width;
-
-                // FULL SCREEN TOUCH = UP (THRUST) + FIRE
-                this.keys['KeyF'] = true;
-                this.keys['ArrowUp'] = true;
-
-            }
+            // Touch anywhere triggers thrust
+            this.keys['ArrowUp'] = true;
         };
 
-        gameContainer.addEventListener('touchstart', handleTouch, { passive: false });
-        gameContainer.addEventListener('touchmove', handleTouch, { passive: false });
+        const handleTouchMove = (e) => {
+            if (!this.isRunning || this.isPaused || this.isCountingDown) return;
+            e.preventDefault();
+
+            if (e.touches.length > 0) {
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - touchStartX;
+
+                // Subtle horizontal drag steering
+                if (deltaX > 25) {
+                    this.keys['ArrowRight'] = true;
+                    this.keys['ArrowLeft'] = false;
+                } else if (deltaX < -25) {
+                    this.keys['ArrowLeft'] = true;
+                    this.keys['ArrowRight'] = false;
+                } else {
+                    this.keys['ArrowLeft'] = false;
+                    this.keys['ArrowRight'] = false;
+                }
+            }
+        };
 
         const handleTouchEnd = (e) => {
             if (!this.isRunning) return;
-
-            e.preventDefault();
-            // If no touches remain, reset all mobile keys
             if (e.touches.length === 0) {
+                this.keys['ArrowUp'] = false;
                 this.keys['ArrowLeft'] = false;
                 this.keys['ArrowRight'] = false;
-                this.keys['ArrowUp'] = false;
-                this.keys['KeyF'] = false;
-            } else {
-                // Re-evaluate remaining touches
-                handleTouch(e);
             }
         };
+
+        gameContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+        gameContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
         gameContainer.addEventListener('touchend', handleTouchEnd, { passive: false });
         gameContainer.addEventListener('touchcancel', handleTouchEnd, { passive: false });
 
-
-        // Keep specific listeners for the remaining UI buttons (Thrust/Pause)
-        // Pause Button
-        const pauseBtn = document.getElementById('mobile-pause-btn');
-        if (pauseBtn) {
-            const stopProp = (e) => { e.stopPropagation(); };
-            pauseBtn.addEventListener('click', (e) => {
-                e.preventDefault(); e.stopPropagation();
+        // Mobile Pause Button
+        const mobilePauseBtn = document.getElementById('mobile-pause-btn');
+        if (mobilePauseBtn) {
+            mobilePauseBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                sounds.playClick();
                 this.togglePause();
             });
-            pauseBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault(); e.stopPropagation();
-                this.togglePause();
-            });
-            pauseBtn.addEventListener('touchmove', stopProp, { passive: false });
-            pauseBtn.addEventListener('touchend', stopProp, { passive: false });
-        }
-
-        // Thrust Button (Optional override / visual feedback)
-        const btnThrust = document.getElementById('btn-thrust');
-        if (btnThrust) {
-            const stopProp = (e) => { e.preventDefault(); e.stopPropagation(); };
-
-            btnThrust.addEventListener('touchstart', (e) => {
-                e.preventDefault(); e.stopPropagation();
-                this.keys['ArrowUp'] = true;
-                btnThrust.classList.add('bg-white/30');
-            });
-
-            // Isolate from global handler
-            btnThrust.addEventListener('touchmove', stopProp, { passive: false });
-
-            const endThrust = (e) => {
-                e.preventDefault(); e.stopPropagation();
-                this.keys['ArrowUp'] = false;
-                btnThrust.classList.remove('bg-white/30');
-            };
-            btnThrust.addEventListener('touchend', endThrust, { passive: false });
-            btnThrust.addEventListener('touchcancel', endThrust, { passive: false });
         }
     }
 
-    togglePause() {
-        if (!this.isRunning || !this.activeMode) return;
+    startMenuLoop() {
+        const loop = () => {
+            if (!this.isRunning) {
+                this.ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                this.menuStars.forEach(s => {
+                    s.update(1.2, 1);
+                    s.draw(this.ctx);
+                });
+            }
+            requestAnimationFrame(loop);
+        };
+        requestAnimationFrame(loop);
+    }
 
-        // If currently doing countdown, ignore inputs
-        if (this.isCountingDown) return;
+    togglePause() {
+        if (!this.isRunning || !this.activeMode || this.isCountingDown) return;
 
         if (this.isPaused) {
-            // UNPAUSE -> START COUNTDOWN
             this.startResumeCountdown();
         } else {
-            // PAUSE
             this.isPaused = true;
             const pauseMenu = document.getElementById('pause-menu');
             pauseMenu.classList.remove('hidden');
@@ -186,16 +235,18 @@ export class GameManager {
             count--;
             if (count > 0) {
                 countdownText.innerText = count;
+                sounds.playClick();
             } else {
                 clearInterval(timer);
                 countdownOverlay.classList.add('hidden');
                 this.isPaused = false;
                 this.isCountingDown = false;
             }
-        }, 1000);
+        }, 800);
     }
 
     startMode(modeType) {
+        sounds.ensureContext();
         if (modeType === 'STORY') {
             this.activeMode = new StoryMode(this.ctx, (results) => this.endGame(results));
         } else if (modeType === 'BOSS_RUSH') {
@@ -207,33 +258,33 @@ export class GameManager {
         this.isRunning = true;
         this.isPaused = false;
         this.isCountingDown = false;
+        this._lastTimestamp = performance.now();
 
         // Hide Menus
         document.getElementById('start-menu').classList.add('hidden');
         document.getElementById('game-over').classList.add('hidden');
         document.getElementById('about-modal').classList.add('hidden');
+        document.getElementById('pause-menu').classList.add('hidden');
         document.getElementById('instructions').classList.remove('hidden');
 
         const instr = document.getElementById('instructions');
         if (modeType === 'STORY') {
-            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>GALACTIC ODYSSEY</strong></p>Arrows/Space to Fly<br>F/Z to Shoot<br>Level Up & Collect Hearts.`;
+            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>GALACTIC ODYSSEY</strong></p>Arrows / Space to Fly<br>Dodge Hazards & Collect Hearts<br>Charge EMP to Evade Mothership!`;
         } else if (modeType === 'BOSS_RUSH') {
-            instr.innerHTML = `<p class="text-green-500 mb-1"><strong>🛡️ SURVIVAL PROTOCOL</strong></p>WEAPONS DISABLED.<br>Dodge for 30s to Survive.<br>Use your piloting skills!`;
+            instr.innerHTML = `<p class="text-green-400 mb-1"><strong>SURVIVAL PROTOCOL</strong></p>Survive 30s per Wave<br>Pure Piloting Skill Required<br>Dodge Everything!`;
         } else {
-            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>CLASSIC ARCADE</strong></p>Arrows/Space to Fly<br>Dodge Everything!<br>No Shooting. No Mercy.`;
+            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>CLASSIC ARCADE</strong></p>Arrows / Space to Fly<br>Dodge Asteroids & UFOs<br>Collect Coins for +100 PTS!`;
         }
 
-        this.loop();
+        this.loop(performance.now());
     }
 
     loop(timestamp = 0) {
         if (!this.isRunning) return;
 
-        // Delta-time: milliseconds since last frame, capped at 50ms to
-        // prevent huge physics jumps after tab-switch or resize.
         const rawDt = timestamp - (this._lastTimestamp || timestamp);
         this._lastTimestamp = timestamp;
-        // Normalize to 60fps baseline so dt=1 at 60fps, dt≈0.5 at 120fps, etc.
+        // Normalize to 60fps baseline
         const dt = Math.min(rawDt, 50) / 16.667;
 
         if (!this.isPaused && !this.isCountingDown && this.activeMode) {
@@ -242,7 +293,6 @@ export class GameManager {
             this.activeMode.draw();
             this.updateHUD(this.activeMode.getHUDData());
         } else if (this.isPaused || this.isCountingDown) {
-            // Keep drawing so it doesn't vanish
             if (this.activeMode) this.activeMode.draw();
         }
 
@@ -251,8 +301,8 @@ export class GameManager {
 
     updateHUD(data) {
         let heartString = '';
-        for (let i = 0; i < data.lives; i++) heartString += '❤️';
-        document.getElementById('hearts').innerText = heartString;
+        for (let i = 0; i < Math.max(0, data.lives); i++) heartString += '❤️';
+        document.getElementById('hearts').innerText = heartString || '💀';
 
         document.getElementById('score').innerText = data.score.toString().padStart(5, '0');
         document.getElementById('high-score').innerText = data.highScore;
@@ -261,11 +311,12 @@ export class GameManager {
         lvlDisplay.innerText = data.label;
         lvlDisplay.style.color = data.labelColor;
 
+        const coinDisplay = document.getElementById('coin-display');
         if (data.coins !== null && data.coins !== undefined) {
-            document.getElementById('coin-display').style.display = 'block';
+            coinDisplay.style.display = 'block';
             document.getElementById('coin-count').innerText = data.coins;
         } else {
-            // keep hidden if classic mode doesn't return coins
+            coinDisplay.style.display = 'none';
         }
     }
 
@@ -274,11 +325,20 @@ export class GameManager {
         const gameOverEl = document.getElementById('game-over');
         gameOverEl.classList.remove('hidden');
 
-        document.getElementById('final-score').innerText = Math.floor(results.score);
+        document.getElementById('final-score').innerText = results.score;
+        document.getElementById('game-over-high').innerText = `BEST: ${results.highScore}`;
+        document.getElementById('game-over-coins').innerText = `COINS: ${results.coins || 0}`;
 
-        gsap.fromTo(gameOverEl, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1 });
+        const newHighBadge = document.getElementById('new-high-badge');
+        if (newHighBadge) {
+            if (results.isNewHigh) {
+                newHighBadge.classList.remove('hidden');
+            } else {
+                newHighBadge.classList.add('hidden');
+            }
+        }
 
-        // No auto reboot. Waiting for user input.
+        gsap.fromTo(gameOverEl, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4 });
     }
 
     resetToMenu() {
@@ -294,7 +354,10 @@ export class GameManager {
         document.getElementById('start-menu').classList.remove('hidden');
         document.getElementById('instructions').classList.add('hidden');
 
-        // Clear canvas
-        this.ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        // Reset borders
+        const container = document.getElementById('game-container');
+        if (container) {
+            container.style.borderColor = '#FFFFFF';
+        }
     }
 }
