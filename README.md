@@ -1,78 +1,74 @@
-# Cosmic Escape
+# Cosmic Escape 🚀
 
-A modern, high-octane architectural arcade shooter built with **Vite**, **Tailwind CSS**, and **Canvas**.
+A high-octane retro-futuristic cosmic arcade game built with **Vanilla JavaScript (ES6+)**, **HTML5 Canvas**, **Tailwind CSS**, and **Vite**.
 
-![Game Preview](https://via.placeholder.com/800x400?text=Cosmic+Escape) 
-*(Replace with actual screenshot)*
+Survive the cosmic void, weave through asteroid fields, evade alien UFOs, and out-pilot the galactic mothership.
 
-## 🚀 Mission Briefing
+---
 
-**Cosmic Escape** puts you in the cockpit of a lone starfighter. Your mission is simple: survive the infinite void.
+## 🎮 Game Modes
 
-The game features three distinct modes:
+1. **CLASSIC ARCADE**
+   * The original retro simulation.
+   * Dodge asteroids and alien UFOs.
+   * Dynamic speed acceleration as your score increases.
+   * Collect cosmic gold coins for bonus points (+100 PTS).
 
-*   **GALACTIC ODYSSEY (Story Mode)**: A tailored campaign across 500 sectors.
-    *   **Progression**: Level up to upgrade your ship (Faster Fire Rate).
-    *   **Bosses**: Battle immense bosses every 10 levels.
-    *   **Economy**: Collect Coins to gain Hearts (10 Coins = +1 Life).
-*   **SURVIVAL PROTOCOL**: A high-intensity challenge.
-    *   **Objective**: Survive for 30 Seconds per level.
-    *   **Weapons Disabled**: Pure piloting skill required.
-    *   **No Bosses**: Focus on hazard avoidance.
-*   **CLASSIC ARCADE**: The original simulation. Scaling difficulty, one life, infinite danger.
+2. **GALACTIC ODYSSEY (Story Mode)**
+   * Deep-space expedition across dynamic cosmic sectors.
+   * Collect coins to earn extra shields/lives (10 Coins = +1 Life).
+   * Heart drops every 500 points to recover critical hull integrity.
+   * Mothership Interception: evade sweeping orbital plasma beams and collect Overdrive EMP Cores to trigger Hyperdrive and escape!
 
-## 🎮 Controls
+3. **SURVIVAL PROTOCOL**
+   * High-intensity agility trial.
+   * Survive 30 seconds per wave against escalating cosmic hazards.
+   * Clearing a wave grants +3000 PTS and shield recovery.
 
-The game fully supports both **Keyboard** (Desktop) and **Touch** (Mobile/Tablet) controls.
+---
+
+## 🕹️ Controls
+
+Fully optimized for **Desktop** (Keyboard) and **Mobile / Tablet** (Touch):
 
 | Action | Desktop (Keyboard) | Mobile (Touch) |
 | :--- | :--- | :--- |
-| **Move** | Arrow Keys | Tap & Hold (Thrust) |
-| **Fire** | F / Z / Ctrl | Auto-Fire (While Thrusting) |
-| **Pause** | P / Esc | Top-Left Icon |
+| **Thrust / Ascend** | `Arrow Up` / `Space` / `W` | Tap & Hold anywhere |
+| **Steer Left / Right** | `Arrow Left` / `Arrow Right` / `A` / `D` | Drag / Slide finger |
+| **Pause / Resume** | `P` / `Esc` | ⏸️ On-screen Pause Button |
+| **Toggle Audio** | 🔊 / 🔇 Button in HUD & Menu | 🔊 / 🔇 Button |
 
-## 🛠️ Tech Stack
+---
 
-*   **Core**: Vanilla JavaScript (ES6+)
-*   **Rendering**: HTML5 Canvas API
-*   **Styling**: Tailwind CSS (Utility-first)
-*   **Build Tool**: Vite
-*   **Animations**: GSAP (GreenSock Animation Platform)
+## 🛠️ Architecture & Tech Stack
 
-## 📦 Installation & Setup
+* **Game Engine**: Custom object-oriented Canvas engine with unified `BaseMode` architecture.
+* **Audio Synthesizer**: Procedural Web Audio API sound generator (zero asset download overhead).
+* **Score System**: Type-safe local storage score manager with real-time high score tracking per mode.
+* **Styling**: Tailwind CSS + Google Press Start 2P 8-bit typography.
+* **Build Tool**: Vite.
 
-1.  **Clone the repository**:
-    ```bash
-    git clone https://github.com/codxbrexx/Cosmic_Escape.git
-    cd Cosmic_Escape
-    ```
+---
 
-2.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
+## 📦 Getting Started
 
-3.  **Run Development Server**:
-    ```bash
-    npm run dev
-    ```
-    Open `http://localhost:5173` (or the port shown in terminal) to play.
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-4.  **Build for Production**:
-    ```bash
-    npm run build
-    ```
+2. **Start Development Server**:
+   ```bash
+   npm run dev
+   ```
 
-## 🌌 Features
+3. **Production Build**:
+   ```bash
+   npm run build
+   ```
 
-*   **Responsive Design**: Automatically scales from Mobile to Desktop (2:1 Aspect Ratio).
-*   **Mobile Optimized**: `touch-none` handling, dynamic joystick-like control.
-*   **Visual Polish**: Dynamic borders, particle explosions, and sector announcements.
-*   **Persistent Scores**: High scores are saved locally for all modes.
-*   **Monochrome & Color**: A sleek aesthetic that evolves as you play.
+---
 
 ## 👨‍💻 Creator
 
 Built by **[CODXBREXX](https://github.com/codxbrexx)**.
-
-> "Building digital universes one line of code at a time."

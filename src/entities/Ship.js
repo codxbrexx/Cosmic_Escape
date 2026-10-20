@@ -1,7 +1,7 @@
 import { shipSprite } from '../utils/Sprite.js';
 import { Particle } from './Particle.js';
-import { Projectile } from './Projectile.js';
-import { CANVAS_WIDTH, CANVAS_HEIGHT, GRAVITY, THRUST_FORCE, COLOR_SHIP, COLOR_ENGINE } from '../constants.js';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, COLOR_SHIP, COLOR_ENGINE } from '../constants.js';
+import { sounds } from '../utils/SoundManager.js';
 
 export class Ship {
     constructor(config = {}) {
@@ -13,37 +13,42 @@ export class Ship {
         this.thrusting = false;
 
         // Physics Config
-        this.gravity = config.gravity || 0.25;
-        this.thrust = config.thrust || -6;
-        this.drag = config.drag || 0.96; // Default to standard drag
+        this.gravity = config.gravity || 0.22;
+        this.thrust = config.thrust || -5.5;
+        this.drag = config.drag || 0.96;
     }
 
-    // Pass an onCreateParticle callback or the particles array
     update(particles, frameCount, invulnerableTimer, loseLifeCallback, createExplosionCallback, dt = 1) {
-        // Physics — all forces scaled by dt so they're frame-rate independent
+        // Physics — all forces scaled by dt for frame-rate independence
         if (this.thrusting) {
-            this.vy += this.thrust * 0.10 * dt; // sensitivity of thrust
-            if (frameCount % 3 === 0) {
-                particles.push(new Particle(this.x, this.y + this.height - 10, COLOR_ENGINE, 4, 3));
+            this.vy += this.thrust * 0.10 * dt;
+            sounds.playThrust();
+
+            // Ion Thruster Particles streaming out from the rear engines
+            if (frameCount % 2 === 0) {
+                // Two engine exhaust streams
+                particles.push(new Particle(this.x - 4, this.y + this.height * 0.65, '#00FFFF', 4, 3));
+                particles.push(new Particle(this.x - 2, this.y + this.height * 0.85, '#FF00CC', 3, 2.5));
             }
         }
+
         // Gravity always applies
         this.vy += this.gravity * dt;
 
-        // Apply Drag (Air Resistance) — exponentiated so it's dt-correct
+        // Air Resistance / Inertial Drag
         this.vy *= Math.pow(this.drag, dt);
 
-        // Cap speed
-        if (this.vy > 8) this.vy = 8;
-        if (this.vy < -8) this.vy = -8;
+        // Cap vertical velocity for smooth maneuverability
+        if (this.vy > 8.5) this.vy = 8.5;
+        if (this.vy < -8.5) this.vy = -8.5;
 
         this.y += this.vy * dt;
 
-        // Bounds X (Safety Clamp)
+        // Bounds X
         if (this.x < 0) this.x = 0;
         if (this.x + this.width > CANVAS_WIDTH) this.x = CANVAS_WIDTH - this.width;
 
-        // Bounds Y
+        // Bounds Y (Floor & Ceiling)
         if (this.y < 0) {
             this.y = 0;
             this.vy = 0;
@@ -53,25 +58,21 @@ export class Ship {
             if (invulnerableTimer <= 0) {
                 loseLifeCallback();
                 createExplosionCallback(this.x + this.width / 2, this.y + this.height, '#FF4444');
-                this.vy = -12; // Hard bounce
+                this.vy = -10; // Bounce off the lower barrier
             }
         }
     }
 
     draw(ctx) {
-        shipSprite.draw(ctx, this.x, this.y, 0, COLOR_SHIP);
-
-        // Draw Engine flame if thrusting
+        // Thruster glow when thrusting
         if (this.thrusting) {
-            // Main engine glare
-            ctx.fillStyle = COLOR_ENGINE;
-            ctx.fillRect(this.x, this.y + this.height - 5, 8, 15 + Math.random() * 10);
+            ctx.save();
+            ctx.shadowColor = '#00FFFF';
+            ctx.shadowBlur = 10;
+            shipSprite.draw(ctx, this.x, this.y, 0, COLOR_SHIP);
+            ctx.restore();
+        } else {
+            shipSprite.draw(ctx, this.x, this.y, 0, COLOR_SHIP);
         }
-    }
-
-    shoot(projectiles) {
-        // Spawn bullet at the nose of the ship
-        // Nose is roughly x + width, y + height/2
-        projectiles.push(new Projectile(this.x + this.width, this.y + this.height / 2, false));
     }
 }

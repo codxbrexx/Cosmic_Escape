@@ -40,13 +40,8 @@ const SPRITE_COIN = [
     "0111110",
     "0011100",
 ];
-// BULLET SPRITE
-const SPRITE_BULLET = [
-    "1111",
-    "1111"
-];
 
-// BOSS SPRITE
+// BOSS / MOTHERSHIP SPRITE
 const SPRITE_BOSS = [
     "0011111111111100",
     "0111111111111110",
@@ -59,7 +54,7 @@ const SPRITE_BOSS = [
 ];
 
 export class Sprite {
-    constructor(bitmaps, scale = 4) { // Increased default scale for larger screen
+    constructor(bitmaps, scale = 4) {
         if (!Array.isArray(bitmaps[0])) {
             this.frames = [bitmaps];
         } else {
@@ -85,10 +80,9 @@ export class Sprite {
     }
 }
 
-// Instantiate Sprites
+// Instantiate Sprites (Bullet sprite removed)
 export const shipSprite = new Sprite(SPRITE_SHIP, 4);
-export const asteroidSprite = new Sprite(SPRITE_ASTEROID, 6); // Bigger asteroids
+export const asteroidSprite = new Sprite(SPRITE_ASTEROID, 6);
 export const ufoSprite = new Sprite(SPRITE_UFO, 4);
 export const coinSprite = new Sprite(SPRITE_COIN, 4);
-export const bulletSprite = new Sprite(SPRITE_BULLET, 4);
-export const bossSprite = new Sprite(SPRITE_BOSS, 12); // Large scale for boss
+export const bossSprite = new Sprite(SPRITE_BOSS, 12);
