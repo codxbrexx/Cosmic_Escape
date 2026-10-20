@@ -30,8 +30,8 @@ export class Ship {
 
             // Ion Thruster Particles matching equipped chassis colors
             if (frameCount % 2 === 0) {
-                particles.push(new Particle(this.x - 4, this.y + this.height * 0.65, this.skin.exhaustPrimary, 4, 3));
-                particles.push(new Particle(this.x - 2, this.y + this.height * 0.85, this.skin.exhaustSecondary, 3, 2.5));
+                this.emitParticle(particles, this.x - 4, this.y + this.height * 0.65, this.skin.exhaustPrimary, 4, 3);
+                this.emitParticle(particles, this.x - 2, this.y + this.height * 0.85, this.skin.exhaustSecondary, 3, 2.5);
             }
         }
 
@@ -76,6 +76,18 @@ export class Ship {
             ctx.restore();
         } else {
             shipSprite.draw(ctx, this.x, this.y, 0, this.skin.shipColor);
+        }
+    }
+
+    emitParticle(particles, x, y, color, speed, size) {
+        for (let i = 0; i < particles.length; i++) {
+            if (!particles[i].active) {
+                particles[i].reset(x, y, color, speed, size);
+                return;
+            }
+        }
+        if (particles.length < 250) {
+            particles.push(new Particle(x, y, color, speed, size));
         }
     }
 }

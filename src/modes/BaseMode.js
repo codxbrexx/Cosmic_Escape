@@ -79,9 +79,21 @@ export class BaseMode {
         }
     }
 
+    spawnParticle(x, y, color, speed = 8, size = 4) {
+        for (let i = 0; i < this.particles.length; i++) {
+            if (!this.particles[i].active) {
+                this.particles[i].reset(x, y, color, speed, size);
+                return;
+            }
+        }
+        if (this.particles.length < 300) {
+            this.particles.push(new Particle(x, y, color, speed, size));
+        }
+    }
+
     createExplosion(x, y, color, count = 12) {
         for (let i = 0; i < count; i++) {
-            this.particles.push(new Particle(x, y, color, 8, 4));
+            this.spawnParticle(x, y, color, 8, 4);
         }
     }
 
@@ -169,8 +181,11 @@ export class BaseMode {
 
         // Background & Particles
         this.stars.forEach(s => s.update(this.gameSpeed, dt));
-        this.particles.forEach(p => p.update(dt));
-        this.particles = this.particles.filter(p => p.life > 0);
+        for (let i = 0; i < this.particles.length; i++) {
+            if (this.particles[i].active) {
+                this.particles[i].update(dt);
+            }
+        }
 
         this.floatingTexts.forEach(ft => ft.update(dt));
         this.floatingTexts = this.floatingTexts.filter(ft => !ft.markedForDeletion);
@@ -194,7 +209,11 @@ export class BaseMode {
         }
 
         this.stars.forEach(s => s.draw(this.ctx));
-        this.particles.forEach(p => p.draw(this.ctx));
+        for (let i = 0; i < this.particles.length; i++) {
+            if (this.particles[i].active) {
+                this.particles[i].draw(this.ctx);
+            }
+        }
         this.coins.forEach(c => c.draw(this.ctx));
         this.obstacles.forEach(obs => obs.draw(this.ctx));
         this.floatingTexts.forEach(ft => ft.draw(this.ctx));

@@ -1,4 +1,4 @@
-// --- PIXEL ART DEFINITONS ---
+// --- PIXEL ART DEFINITONS & OPTIMIZED SPRITE ENGINE ---
 
 // SPACESHIP SPRITE
 const SPRITE_SHIP = [
@@ -64,23 +64,42 @@ export class Sprite {
         this.scale = scale;
         this.height = this.frames[0].length * scale;
         this.width = this.frames[0][0].length * scale;
+        // Offscreen hardware-accelerated canvas cache
+        this.cache = new Map();
     }
 
-    draw(ctx, x, y, frameIndex = 0, color = '#FFF') {
-        const frame = this.frames[frameIndex % this.frames.length];
+    getRenderedCanvas(frameIndex, color) {
+        const key = `${frameIndex}_${color}`;
+        if (this.cache.has(key)) {
+            return this.cache.get(key);
+        }
 
-        ctx.fillStyle = color;
+        const offscreen = document.createElement('canvas');
+        offscreen.width = this.width;
+        offscreen.height = this.height;
+        const oCtx = offscreen.getContext('2d');
+
+        const frame = this.frames[frameIndex % this.frames.length];
+        oCtx.fillStyle = color;
         for (let r = 0; r < frame.length; r++) {
             for (let c = 0; c < frame[r].length; c++) {
                 if (frame[r][c] === '1') {
-                    ctx.fillRect(x + c * this.scale, y + r * this.scale, this.scale, this.scale);
+                    oCtx.fillRect(c * this.scale, r * this.scale, this.scale, this.scale);
                 }
             }
         }
+
+        this.cache.set(key, offscreen);
+        return offscreen;
+    }
+
+    draw(ctx, x, y, frameIndex = 0, color = '#FFF') {
+        const cached = this.getRenderedCanvas(frameIndex, color);
+        ctx.drawImage(cached, x, y);
     }
 }
 
-// Instantiate Sprites (Bullet sprite removed)
+// Instantiate Sprites with cached offscreen rendering
 export const shipSprite = new Sprite(SPRITE_SHIP, 4);
 export const asteroidSprite = new Sprite(SPRITE_ASTEROID, 6);
 export const ufoSprite = new Sprite(SPRITE_UFO, 4);
