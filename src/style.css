@@ -7,7 +7,74 @@
   --text: #e8f1f5;
 }
 
-body {
-    background-color: var(--bg);
-    color: var(--text);
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Ensure pixel sharpness on retro canvas */
+canvas {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Landscape mobile optimization: expand container to fill available height */
+@media (orientation: landscape) and (max-height: 540px) {
+  body {
+    padding: 0 !important;
+  }
+  #game-container {
+    max-height: 100dvh !important;
+    height: 100dvh !important;
+    width: auto !important;
+    aspect-ratio: 2 / 1 !important;
+    border-width: 2px !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* Touch Control Button Styles */
+.touch-btn {
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  color: #FFFFFF;
+  transition: all 0.08s ease;
+}
+
+.touch-btn:active, .touch-btn.active {
+  background: rgba(0, 255, 204, 0.35);
+  border-color: #00FFCC;
+  transform: scale(0.94);
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
+}
+
+/* Pulse animation for rotate suggestion */
+@keyframes tilt-phone {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-90deg); }
+}
+
+.animate-tilt {
+  animation: tilt-phone 2.5s ease-in-out infinite;
 }

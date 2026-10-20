@@ -36,7 +36,68 @@ export class GameManager {
 
         this.setupUI();
         this.setupAudioToggle();
+        this.setupFullscreenToggle();
+        this.setupOrientationHandler();
         this.startMenuLoop();
+    }
+
+    setupFullscreenToggle() {
+        const toggleFullscreen = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            sounds.playClick();
+
+            if (!document.fullscreenElement) {
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen().catch(() => {});
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen().catch(() => {});
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen().catch(() => {});
+                }
+            }
+        };
+
+        const updateFullscreenIcons = () => {
+            const isFull = !!document.fullscreenElement;
+            document.querySelectorAll('.btn-fullscreen').forEach(btn => {
+                btn.innerText = isFull ? '✖' : '⛶';
+                btn.title = isFull ? 'Exit Fullscreen' : 'Enter Fullscreen';
+            });
+        };
+
+        document.querySelectorAll('.btn-fullscreen').forEach(btn => {
+            btn.addEventListener('click', toggleFullscreen);
+        });
+
+        document.addEventListener('fullscreenchange', updateFullscreenIcons);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenIcons);
+    }
+
+    setupOrientationHandler() {
+        const checkOrientation = () => {
+            const hint = document.getElementById('portrait-hint');
+            if (!hint) return;
+            const isPortrait = window.innerHeight > window.innerWidth && window.innerWidth < 768;
+            if (isPortrait) {
+                hint.classList.remove('hidden');
+                hint.classList.add('flex');
+            } else {
+                hint.classList.add('hidden');
+                hint.classList.remove('flex');
+            }
+        };
+
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', checkOrientation);
+        checkOrientation();
     }
 
     setupAudioToggle() {
@@ -125,36 +186,83 @@ export class GameManager {
 
     setupMobileControls() {
         const gameContainer = document.getElementById('game-container');
+        const touchLeft = document.getElementById('touch-left');
+        const touchRight = document.getElementById('touch-right');
+        const touchThrust = document.getElementById('touch-thrust');
+
+        // Helper to bind tactile button touch events
+        const bindButton = (btn, key) => {
+            if (!btn) return;
+
+            const onStart = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                sounds.ensureContext();
+                this.keys[key] = true;
+                btn.classList.add('active');
+                sounds.vibrate(12);
+            };
+
+            const onEnd = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.keys[key] = false;
+                btn.classList.remove('active');
+            };
+
+            btn.addEventListener('touchstart', onStart, { passive: false });
+            btn.addEventListener('touchend', onEnd, { passive: false });
+            btn.addEventListener('touchcancel', onEnd, { passive: false });
+
+            // Desktop click/mouse support for on-screen buttons
+            btn.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                sounds.ensureContext();
+                this.keys[key] = true;
+                btn.classList.add('active');
+            });
+            window.addEventListener('mouseup', () => {
+                this.keys[key] = false;
+                btn.classList.remove('active');
+            });
+        };
+
+        bindButton(touchLeft, 'ArrowLeft');
+        bindButton(touchRight, 'ArrowRight');
+        bindButton(touchThrust, 'ArrowUp');
+
+        // Global Canvas Gestures (Tap & Drag anywhere as an alternative control)
         let touchStartX = 0;
 
-        const handleTouchStart = (e) => {
+        const handleCanvasTouchStart = (e) => {
             if (!this.isRunning || this.isPaused || this.isCountingDown) return;
             sounds.ensureContext();
 
-            // Ignore touches on UI buttons
+            // Ignore if tapped on a button
             if (e.target.closest('button')) return;
 
             e.preventDefault();
             const touch = e.touches[0];
             touchStartX = touch.clientX;
 
-            // Touch anywhere triggers thrust
+            // Tap & hold anywhere thrusts
             this.keys['ArrowUp'] = true;
+            sounds.vibrate(10);
         };
 
-        const handleTouchMove = (e) => {
+        const handleCanvasTouchMove = (e) => {
             if (!this.isRunning || this.isPaused || this.isCountingDown) return;
-            e.preventDefault();
+            if (e.target.closest('button')) return;
 
+            e.preventDefault();
             if (e.touches.length > 0) {
                 const touch = e.touches[0];
                 const deltaX = touch.clientX - touchStartX;
 
-                // Subtle horizontal drag steering
-                if (deltaX > 25) {
+                if (deltaX > 20) {
                     this.keys['ArrowRight'] = true;
                     this.keys['ArrowLeft'] = false;
-                } else if (deltaX < -25) {
+                } else if (deltaX < -20) {
                     this.keys['ArrowLeft'] = true;
                     this.keys['ArrowRight'] = false;
                 } else {
@@ -164,8 +272,10 @@ export class GameManager {
             }
         };
 
-        const handleTouchEnd = (e) => {
+        const handleCanvasTouchEnd = (e) => {
             if (!this.isRunning) return;
+            if (e.target.closest('button')) return;
+
             if (e.touches.length === 0) {
                 this.keys['ArrowUp'] = false;
                 this.keys['ArrowLeft'] = false;
@@ -173,10 +283,10 @@ export class GameManager {
             }
         };
 
-        gameContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
-        gameContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
-        gameContainer.addEventListener('touchend', handleTouchEnd, { passive: false });
-        gameContainer.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+        gameContainer.addEventListener('touchstart', handleCanvasTouchStart, { passive: false });
+        gameContainer.addEventListener('touchmove', handleCanvasTouchMove, { passive: false });
+        gameContainer.addEventListener('touchend', handleCanvasTouchEnd, { passive: false });
+        gameContainer.addEventListener('touchcancel', handleCanvasTouchEnd, { passive: false });
 
         // Mobile Pause Button
         const mobilePauseBtn = document.getElementById('mobile-pause-btn');
@@ -214,6 +324,9 @@ export class GameManager {
             const pauseMenu = document.getElementById('pause-menu');
             pauseMenu.classList.remove('hidden');
             pauseMenu.style.display = 'flex';
+
+            const touchControls = document.getElementById('touch-controls');
+            if (touchControls) touchControls.classList.add('hidden');
         }
     }
 
@@ -241,8 +354,23 @@ export class GameManager {
                 countdownOverlay.classList.add('hidden');
                 this.isPaused = false;
                 this.isCountingDown = false;
+
+                // Restore touch controls if mobile
+                this.updateTouchControlsVisibility();
             }
         }, 800);
+    }
+
+    updateTouchControlsVisibility() {
+        const touchControls = document.getElementById('touch-controls');
+        if (!touchControls) return;
+
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.innerWidth < 1024;
+        if (this.isRunning && !this.isPaused && !this.isCountingDown && isTouchDevice) {
+            touchControls.classList.remove('hidden');
+        } else {
+            touchControls.classList.add('hidden');
+        }
     }
 
     startMode(modeType) {
@@ -260,20 +388,22 @@ export class GameManager {
         this.isCountingDown = false;
         this._lastTimestamp = performance.now();
 
-        // Hide Menus
+        // Hide Menus & Show In-Game HUD
         document.getElementById('start-menu').classList.add('hidden');
         document.getElementById('game-over').classList.add('hidden');
         document.getElementById('about-modal').classList.add('hidden');
         document.getElementById('pause-menu').classList.add('hidden');
         document.getElementById('instructions').classList.remove('hidden');
 
+        this.updateTouchControlsVisibility();
+
         const instr = document.getElementById('instructions');
         if (modeType === 'STORY') {
-            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>GALACTIC ODYSSEY</strong></p>Arrows / Space to Fly<br>Dodge Hazards & Collect Hearts<br>Charge EMP to Evade Mothership!`;
+            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-0.5"><strong>GALACTIC ODYSSEY</strong></p>Fly with Arrows / Touch<br>Collect Hearts & EMP Cores to Evade Mothership!`;
         } else if (modeType === 'BOSS_RUSH') {
-            instr.innerHTML = `<p class="text-green-400 mb-1"><strong>SURVIVAL PROTOCOL</strong></p>Survive 30s per Wave<br>Pure Piloting Skill Required<br>Dodge Everything!`;
+            instr.innerHTML = `<p class="text-green-400 mb-0.5"><strong>SURVIVAL PROTOCOL</strong></p>Survive 30s per Wave<br>Pure Piloting Skill Required!`;
         } else {
-            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-1"><strong>CLASSIC ARCADE</strong></p>Arrows / Space to Fly<br>Dodge Asteroids & UFOs<br>Collect Coins for +100 PTS!`;
+            instr.innerHTML = `<p class="text-cosmic-accent-strong mb-0.5"><strong>CLASSIC ARCADE</strong></p>Fly with Arrows / Touch<br>Dodge Hazards & Collect Coins for +100 PTS!`;
         }
 
         this.loop(performance.now());
@@ -284,7 +414,6 @@ export class GameManager {
 
         const rawDt = timestamp - (this._lastTimestamp || timestamp);
         this._lastTimestamp = timestamp;
-        // Normalize to 60fps baseline
         const dt = Math.min(rawDt, 50) / 16.667;
 
         if (!this.isPaused && !this.isCountingDown && this.activeMode) {
@@ -325,6 +454,9 @@ export class GameManager {
         const gameOverEl = document.getElementById('game-over');
         gameOverEl.classList.remove('hidden');
 
+        const touchControls = document.getElementById('touch-controls');
+        if (touchControls) touchControls.classList.add('hidden');
+
         document.getElementById('final-score').innerText = results.score;
         document.getElementById('game-over-high').innerText = `BEST: ${results.highScore}`;
         document.getElementById('game-over-coins').innerText = `COINS: ${results.coins || 0}`;
@@ -347,6 +479,9 @@ export class GameManager {
         this.isPaused = false;
         this.isCountingDown = false;
 
+        const touchControls = document.getElementById('touch-controls');
+        if (touchControls) touchControls.classList.add('hidden');
+
         document.getElementById('game-over').classList.add('hidden');
         document.getElementById('pause-menu').classList.add('hidden');
         document.getElementById('pause-menu').style.display = 'none';
@@ -354,7 +489,6 @@ export class GameManager {
         document.getElementById('start-menu').classList.remove('hidden');
         document.getElementById('instructions').classList.add('hidden');
 
-        // Reset borders
         const container = document.getElementById('game-container');
         if (container) {
             container.style.borderColor = '#FFFFFF';

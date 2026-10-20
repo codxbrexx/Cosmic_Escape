@@ -27,25 +27,27 @@ Survive the cosmic void, weave through asteroid fields, evade alien UFOs, and ou
 
 ---
 
-## 🕹️ Controls
+## 📱 Mobile & Desktop Controls
 
-Fully optimized for **Desktop** (Keyboard) and **Mobile / Tablet** (Touch):
+Fully optimized for **Desktop** (Keyboard) and **Mobile / Tablet** (Touch & Haptics):
 
-| Action | Desktop (Keyboard) | Mobile (Touch) |
+| Action | Desktop (Keyboard) | Mobile / Tablet (Touch) |
 | :--- | :--- | :--- |
-| **Thrust / Ascend** | `Arrow Up` / `Space` / `W` | Tap & Hold anywhere |
-| **Steer Left / Right** | `Arrow Left` / `Arrow Right` / `A` / `D` | Drag / Slide finger |
-| **Pause / Resume** | `P` / `Esc` | ⏸️ On-screen Pause Button |
+| **Thrust / Ascend** | `Arrow Up` / `Space` / `W` | `▲ FLY` Virtual Button / Tap & Hold screen |
+| **Steer Left / Right** | `Arrow Left` / `Arrow Right` / `A` / `D` | `◀` / `▶` Virtual Buttons / Horizontal Drag |
+| **Pause / Resume** | `P` / `Esc` | `⏸️` On-screen Pause Button |
+| **Fullscreen Mode** | Browser F11 | `⛶` Native Fullscreen Toggle Button |
 | **Toggle Audio** | 🔊 / 🔇 Button in HUD & Menu | 🔊 / 🔇 Button |
+| **Haptic Feedback** | N/A | Tactile vibration on thrust, coins, and impacts |
 
 ---
 
 ## 🛠️ Architecture & Tech Stack
 
 * **Game Engine**: Custom object-oriented Canvas engine with unified `BaseMode` architecture.
-* **Audio Synthesizer**: Procedural Web Audio API sound generator (zero asset download overhead).
+* **Audio Synthesizer & Haptics**: Procedural Web Audio API sound generator + Navigator Vibrate API.
 * **Score System**: Type-safe local storage score manager with real-time high score tracking per mode.
-* **Styling**: Tailwind CSS + Google Press Start 2P 8-bit typography.
+* **Responsive Styling**: Tailwind CSS, CSS dynamic viewport (`100dvh`), and Press Start 2P typography.
 * **Build Tool**: Vite.
 
 ---

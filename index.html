@@ -3,95 +3,133 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
     <title>Cosmic Escape</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 
 <body
-    class="min-h-screen flex flex-col justify-center items-center text-cosmic-text font-press-start select-none m-0 p-2 md:p-4 overflow-hidden bg-black touch-none">
+    class="min-h-[100dvh] h-[100dvh] w-full flex flex-col justify-center items-center text-cosmic-text font-press-start select-none m-0 p-1 sm:p-2 md:p-4 overflow-hidden bg-black touch-none">
     
-    <!-- Main Game Frame -->
+    <!-- Portrait Suggestion Bar (Only shown on small portrait screens) -->
+    <div id="portrait-hint" class="hidden sm:hidden text-center py-1 px-3 text-[8px] text-gray-400 bg-white/5 border border-white/20 rounded mb-1 pointer-events-none items-center gap-2">
+        <span class="inline-block animate-tilt">📱</span>
+        <span>Rotate to Landscape for Edge-to-Edge Flight</span>
+    </div>
+
+    <!-- Main Game Container -->
     <div id="game-container"
-        class="relative w-full max-w-[1200px] aspect-[2/1] border-4 border-white overflow-hidden transition-colors duration-500 bg-black shadow-[0_0_30px_rgba(255,255,255,0.15)]">
+        class="relative w-full max-w-[1200px] aspect-[2/1] max-h-[100dvh] border-2 sm:border-4 border-white overflow-hidden transition-colors duration-500 bg-black shadow-[0_0_30px_rgba(255,255,255,0.15)] flex items-center justify-center">
         
         <!-- Start Menu -->
         <div id="start-menu"
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] md:w-[600px] h-auto flex flex-col justify-center items-center text-center z-30 py-4 md:py-8">
-            <h1 class="title text-3xl sm:text-4xl md:text-[56px] leading-tight mb-4 md:mb-[28px] text-cosmic-text tracking-widest text-shadow-lg">
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] sm:w-[85%] md:w-[600px] h-auto flex flex-col justify-center items-center text-center z-30 py-3 sm:py-6">
+            <h1 class="title text-2xl sm:text-4xl md:text-[54px] leading-tight mb-2 sm:mb-4 text-cosmic-text tracking-widest text-shadow-lg">
                 COSMIC<br>ESCAPE</h1>
-            <p class="subtitle text-[10px] sm:text-xs md:text-[14px] text-cosmic-muted mb-6 md:mb-[32px] tracking-[4px] uppercase">
+            <p class="subtitle text-[8px] sm:text-[11px] md:text-[13px] text-cosmic-muted mb-4 sm:mb-6 tracking-[3px] sm:tracking-[4px] uppercase">
                 CHOOSE YOUR MISSION</p>
 
             <button id="btn-classic"
-                class="mode-btn group font-press-start text-xs sm:text-sm md:text-base w-full max-w-[320px] px-6 py-4 md:py-5 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-2 hover:bg-white hover:text-black active:bg-gray-300">
+                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-3 sm:py-4 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-1.5 hover:bg-white hover:text-black active:bg-gray-300">
                 CLASSIC ARCADE
             </button>
             <button id="btn-story"
-                class="mode-btn group font-press-start text-xs sm:text-sm md:text-base w-full max-w-[320px] px-6 py-4 md:py-5 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-2.5 hover:bg-white hover:text-black active:bg-gray-300">
+                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-3 sm:py-4 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-2 hover:bg-white hover:text-black active:bg-gray-300">
                 GALACTIC ODYSSEY
             </button>
             <button id="btn-bossrush"
-                class="mode-btn group font-press-start text-xs sm:text-sm md:text-base w-full max-w-[320px] px-6 py-4 md:py-5 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-2.5 hover:bg-white hover:text-black active:bg-green-800">
+                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-3 sm:py-4 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-2 hover:bg-white hover:text-black active:bg-green-800">
                 SURVIVAL PROTOCOL
             </button>
 
-            <div class="flex items-center gap-3 mt-5">
+            <div class="flex items-center gap-2 sm:gap-3 mt-4 sm:mt-5">
                 <button id="btn-about"
-                    class="mode-btn font-press-start px-4 py-2.5 bg-black text-white border border-white cursor-pointer transition-all duration-200 uppercase hover:bg-white hover:text-black text-[10px] md:text-xs">
+                    class="mode-btn font-press-start px-3 sm:px-4 py-2 sm:py-2.5 bg-black text-white border border-white cursor-pointer transition-all duration-200 uppercase hover:bg-white hover:text-black text-[9px] sm:text-[10px] md:text-xs">
                     MISSION INTEL
                 </button>
-                <button class="btn-audio-toggle font-press-start px-3 py-2 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black text-sm" title="Toggle Audio">
+                <button class="btn-audio-toggle font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black text-xs sm:text-sm" title="Toggle Audio">
                     🔊
+                </button>
+                <button id="btn-fullscreen-menu" class="btn-fullscreen font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black text-xs sm:text-sm" title="Toggle Fullscreen">
+                    ⛶
                 </button>
             </div>
         </div>
 
         <!-- HUD Top -->
         <div id="hud-top"
-            class="absolute top-2.5 md:top-4 left-3 md:left-5 right-3 md:right-5 flex justify-between items-start z-10 pointer-events-none">
+            class="absolute top-2 sm:top-3 md:top-4 left-2 sm:left-4 right-2 sm:right-4 flex justify-between items-start z-10 pointer-events-none">
             
             <!-- Left HUD: Lives & Coins -->
-            <div id="hud-left" class="flex flex-col gap-1 md:gap-2 pointer-events-auto">
-                <div id="hearts" class="text-sm sm:text-base md:text-[20px] text-[#FF0044] tracking-wider">❤️❤️❤️</div>
-                <div id="coin-display" class="text-[10px] sm:text-xs md:text-sm text-cosmic-gold hidden drop-shadow">🪙 <span id="coin-count">0</span></div>
+            <div id="hud-left" class="flex flex-col gap-0.5 sm:gap-1.5 pointer-events-auto">
+                <div id="hearts" class="text-xs sm:text-base md:text-[20px] text-[#FF0044] tracking-wider">❤️❤️❤️</div>
+                <div id="coin-display" class="text-[9px] sm:text-xs md:text-sm text-cosmic-gold hidden drop-shadow">🪙 <span id="coin-count">0</span></div>
             </div>
 
-            <!-- Center HUD: Audio & Mobile Controls -->
-            <div class="flex items-center gap-2 pointer-events-auto">
-                <button id="mobile-pause-btn" class="font-press-start text-[10px] px-2 py-1 bg-black/80 text-white border border-white/60 hover:border-white rounded cursor-pointer" title="Pause Game">
+            <!-- Center HUD: Audio, Pause & Fullscreen Buttons -->
+            <div class="flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
+                <button id="mobile-pause-btn" class="font-press-start text-[9px] sm:text-[10px] px-2 py-1 bg-black/80 text-white border border-white/60 hover:border-white rounded cursor-pointer touch-manipulation" title="Pause Game">
                     ⏸️
                 </button>
-                <button class="btn-audio-toggle font-press-start text-[10px] px-2 py-1 bg-black/80 text-white border border-white/60 hover:border-white rounded cursor-pointer" title="Toggle Audio">
+                <button class="btn-audio-toggle font-press-start text-[9px] sm:text-[10px] px-2 py-1 bg-black/80 text-white border border-white/60 hover:border-white rounded cursor-pointer touch-manipulation" title="Toggle Audio">
                     🔊
+                </button>
+                <button class="btn-fullscreen font-press-start text-[9px] sm:text-[10px] px-2 py-1 bg-black/80 text-white border border-white/60 hover:border-white rounded cursor-pointer touch-manipulation" title="Fullscreen">
+                    ⛶
                 </button>
             </div>
 
             <!-- Right HUD: Score & High Score -->
             <div id="score-container" class="text-right pointer-events-auto">
                 <div id="level-display"
-                    class="text-cosmic-muted text-[9px] md:text-[11px] mb-1 tracking-[2px]">LEVEL 1
+                    class="text-cosmic-muted text-[8px] sm:text-[10px] md:text-[11px] mb-0.5 tracking-[1px] sm:tracking-[2px]">LEVEL 1
                 </div>
-                <div id="high-score" class="text-[#888] text-[8px] md:text-[10px]">HI: 00000</div>
-                <div id="score" class="text-cosmic-text text-base sm:text-lg md:text-[22px] tracking-wider">00000</div>
+                <div id="high-score" class="text-[#888] text-[7px] sm:text-[9px] md:text-[10px]">HI: 00000</div>
+                <div id="score" class="text-cosmic-text text-sm sm:text-lg md:text-[22px] tracking-wider">00000</div>
+            </div>
+        </div>
+
+        <!-- Virtual Touch Controls Overlay for Mobile Screens -->
+        <div id="touch-controls" class="hidden absolute inset-0 z-20 pointer-events-none flex flex-col justify-end p-2 sm:p-4">
+            <div class="flex justify-between items-end w-full">
+                <!-- Steering Pad (Left & Right) -->
+                <div class="flex gap-2 pointer-events-auto">
+                    <button id="touch-left" class="touch-btn w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-lg sm:text-2xl font-press-start active:scale-90" aria-label="Steer Left">
+                        ◀
+                    </button>
+                    <button id="touch-right" class="touch-btn w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-lg sm:text-2xl font-press-start active:scale-90" aria-label="Steer Right">
+                        ▶
+                    </button>
+                </div>
+
+                <!-- Thrust Button (Right side) -->
+                <div class="pointer-events-auto">
+                    <button id="touch-thrust" class="touch-btn w-16 h-16 sm:w-20 sm:h-20 rounded-full flex flex-col items-center justify-center text-base sm:text-xl font-press-start border-cyan-400 active:scale-90" aria-label="Thrust">
+                        <span>▲</span>
+                        <span class="text-[7px] sm:text-[8px] tracking-wider mt-0.5 text-cyan-300">FLY</span>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Pause Overlay -->
         <div id="pause-menu"
-            class="hidden absolute top-0 left-0 w-full h-full bg-black/90 z-50 flex flex-col justify-center items-center text-center text-white">
-            <h2 class="text-2xl md:text-[36px] mb-4 md:mb-[24px] tracking-widest">SYSTEM PAUSED</h2>
+            class="hidden absolute top-0 left-0 w-full h-full bg-black/90 z-50 flex flex-col justify-center items-center text-center text-white p-4">
+            <h2 class="text-xl sm:text-2xl md:text-[34px] mb-3 sm:mb-5 tracking-widest">SYSTEM PAUSED</h2>
             <button id="btn-resume"
-                class="mode-btn font-press-start text-xs md:text-sm px-6 py-3.5 md:py-4 bg-black text-white border border-white cursor-pointer transition-all duration-200 uppercase mt-2.5 hover:bg-white hover:text-black w-[80%] max-w-[280px]">
+                class="mode-btn font-press-start text-[10px] sm:text-xs md:text-sm px-5 py-3 sm:py-3.5 bg-black text-white border border-white cursor-pointer transition-all uppercase mt-2 hover:bg-white hover:text-black w-[80%] max-w-[260px]">
                 RESUME FLIGHT
             </button>
             <button id="btn-quit"
-                class="mode-btn font-press-start text-xs md:text-sm px-6 py-3.5 md:py-4 bg-black text-white border border-white cursor-pointer transition-all duration-200 uppercase mt-2.5 hover:bg-white hover:text-black w-[80%] max-w-[280px]">
+                class="mode-btn font-press-start text-[10px] sm:text-xs md:text-sm px-5 py-3 sm:py-3.5 bg-black text-white border border-white cursor-pointer transition-all uppercase mt-2 hover:bg-white hover:text-black w-[80%] max-w-[260px]">
                 ABORT TO BASE
             </button>
-            <div class="mt-4 flex items-center gap-2">
-                <span class="text-[10px] text-gray-400">AUDIO:</span>
-                <button class="btn-audio-toggle font-press-start text-xs px-3 py-1.5 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black">
+            <div class="mt-3 sm:mt-4 flex items-center gap-2">
+                <span class="text-[9px] sm:text-[10px] text-gray-400">AUDIO:</span>
+                <button class="btn-audio-toggle font-press-start text-xs px-2.5 py-1 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black">
                     🔊
                 </button>
             </div>
@@ -100,85 +138,85 @@
         <!-- Countdown Overlay -->
         <div id="countdown-overlay"
             class="hidden absolute top-0 left-0 w-full h-full z-[55] flex justify-center items-center pointer-events-none bg-black/40">
-            <h1 id="countdown-text" class="text-6xl md:text-[90px] text-white drop-shadow-[0_0_20px_#00FFCC]">3</h1>
+            <h1 id="countdown-text" class="text-5xl sm:text-6xl md:text-[90px] text-white drop-shadow-[0_0_20px_#00FFCC]">3</h1>
         </div>
 
         <!-- Level/Sector Announcement Overlay -->
         <div id="level-announcement"
-            class="hidden absolute top-0 left-0 w-full h-full z-[50] flex justify-center items-center pointer-events-none">
+            class="hidden absolute top-0 left-0 w-full h-full z-[50] flex justify-center items-center pointer-events-none p-2">
             <h1 id="level-announcement-text"
-                class="text-xl md:text-3xl text-cosmic-accent-strong tracking-widest text-shadow-lg scale-up border-y-2 border-white py-3 px-8 bg-black/80">
+                class="text-sm sm:text-xl md:text-3xl text-cosmic-accent-strong tracking-widest text-shadow-lg scale-up border-y-2 border-white py-2 sm:py-3 px-4 sm:px-8 bg-black/80 text-center">
                 SECTOR 1
             </h1>
         </div>
 
         <!-- Mission Intel / About Modal -->
         <div id="about-modal"
-            class="hidden about-overlay absolute top-0 left-0 w-full h-full bg-black/95 z-[60] text-white p-4 md:p-8 box-border overflow-y-auto flex flex-col">
+            class="hidden about-overlay absolute top-0 left-0 w-full h-full bg-black/95 z-[60] text-white p-3 sm:p-6 md:p-8 box-border overflow-y-auto flex flex-col">
             <h2
-                class="about-title mb-6 tracking-[4px] text-white text-xl md:text-2xl text-center uppercase border-b-2 border-white pb-3">
+                class="about-title mb-4 tracking-[3px] text-white text-base sm:text-xl md:text-2xl text-center uppercase border-b-2 border-white pb-2">
                 MISSION BRIEFING
             </h2>
 
-            <div class="flex-grow flex flex-col justify-center gap-6 max-w-[850px] mx-auto w-full">
+            <div class="flex-grow flex flex-col justify-center gap-3 sm:gap-5 max-w-[850px] mx-auto w-full">
                 <!-- Modes -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-                    <div class="about-mode bg-black p-3.5 border border-white">
-                        <strong class="text-cosmic-accent-strong block mb-2 text-xs tracking-wider">1. CLASSIC ARCADE</strong>
-                        <p class="text-gray-400 text-[10px] leading-relaxed">
-                            Pure survival endurance.<br>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3">
+                    <div class="about-mode bg-black p-2.5 sm:p-3 border border-white">
+                        <strong class="text-cosmic-accent-strong block mb-1 text-[10px] sm:text-xs tracking-wider">1. CLASSIC ARCADE</strong>
+                        <p class="text-gray-400 text-[8px] sm:text-[9px] leading-relaxed">
+                            Endless piloting survival.<br>
                             - Dodge Asteroids & UFOs.<br>
-                            - Speed ramps up over time.<br>
-                            - Coins grant +100 PTS bonus.
+                            - Dynamic acceleration.<br>
+                            - Coins grant +100 PTS.
                         </p>
                     </div>
-                    <div class="about-mode bg-black p-3.5 border border-white">
-                        <strong class="text-cosmic-accent-strong block mb-2 text-xs tracking-wider">2. GALACTIC ODYSSEY</strong>
-                        <p class="text-gray-400 text-[10px] leading-relaxed">
-                            Deep-space sector journey.<br>
+                    <div class="about-mode bg-black p-2.5 sm:p-3 border border-white">
+                        <strong class="text-cosmic-accent-strong block mb-1 text-[10px] sm:text-xs tracking-wider">2. GALACTIC ODYSSEY</strong>
+                        <p class="text-gray-400 text-[8px] sm:text-[9px] leading-relaxed">
+                            Deep-space campaign.<br>
                             - Collect Coins (10 = +1 Life).<br>
-                            - Recover Hearts every 500 PTS.<br>
-                            - Charge EMP to evade Mothership!
+                            - Hearts every 500 PTS.<br>
+                            - Charge EMP to escape Mothership!
                         </p>
                     </div>
-                    <div class="about-mode bg-black p-3.5 border border-white">
-                        <strong class="text-green-400 block mb-2 text-xs tracking-wider">3. SURVIVAL PROTOCOL</strong>
-                        <p class="text-gray-400 text-[10px] leading-relaxed">
-                            High-octane agility trial.<br>
+                    <div class="about-mode bg-black p-2.5 sm:p-3 border border-white">
+                        <strong class="text-green-400 block mb-1 text-[10px] sm:text-xs tracking-wider">3. SURVIVAL PROTOCOL</strong>
+                        <p class="text-gray-400 text-[8px] sm:text-[9px] leading-relaxed">
+                            Agility test.<br>
                             - Survive 30s per wave.<br>
                             - Wave Clear: +3000 PTS & +1 Life.<br>
-                            - Pure precision evasion.
+                            - Pure evasion reflexes.
                         </p>
                     </div>
                 </div>
 
                 <!-- Controls & Intel -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left border-t border-white pt-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-left border-t border-white pt-3">
                     <div>
-                        <h3 class="text-cosmic-muted text-[10px] tracking-[2px] mb-2 uppercase">// FLIGHT CONTROLS</h3>
-                        <ul class="text-[10px] leading-loose space-y-1">
-                            <li><span class="text-cosmic-accent-strong">THRUST:</span> Up Arrow / Space / Tap Screen</li>
-                            <li><span class="text-cosmic-accent-strong">STEER:</span> Left & Right / Drag Horizontal</li>
+                        <h3 class="text-cosmic-muted text-[8px] sm:text-[9px] tracking-[2px] mb-1.5 uppercase">// FLIGHT CONTROLS</h3>
+                        <ul class="text-[8px] sm:text-[9px] leading-loose space-y-0.5">
+                            <li><span class="text-cosmic-accent-strong">THRUST:</span> Up / Space / On-screen Button</li>
+                            <li><span class="text-cosmic-accent-strong">STEER:</span> Left & Right / Virtual Buttons / Drag</li>
                             <li><span class="text-cosmic-accent-strong">PAUSE:</span> P / Esc / ⏸️ Button</li>
                         </ul>
                     </div>
                     <div>
-                        <h3 class="text-cosmic-muted text-[10px] tracking-[2px] mb-2 uppercase">// INTEL & OBJECTIVES</h3>
-                        <ul class="text-[10px] leading-loose space-y-1">
+                        <h3 class="text-cosmic-muted text-[8px] sm:text-[9px] tracking-[2px] mb-1.5 uppercase">// INTEL & OBJECTIVES</h3>
+                        <ul class="text-[8px] sm:text-[9px] leading-loose space-y-0.5">
                             <li>🪙 <span class="text-yellow-400">+100 PTS</span> | 10 Coins = +1 Life</li>
-                            <li>❤️ <span class="text-red-400">+1 LIFE</span> (Shield restoration)</li>
-                            <li>⚠️ Avoid Asteroids, UFOs, and Beam Hazs</li>
+                            <li>❤️ <span class="text-red-400">+1 LIFE</span> (Hull integrity)</li>
+                            <li>⚠️ Avoid Asteroids, UFOs, and Beam Hazards</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-auto pt-6 flex flex-col items-center gap-3">
+            <div class="mt-auto pt-4 flex flex-col items-center gap-2">
                 <button id="btn-close-about"
-                    class="mode-btn font-press-start bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase px-8 py-3 text-xs w-[180px]">
+                    class="mode-btn font-press-start bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase px-6 py-2.5 text-[9px] sm:text-xs w-[160px]">
                     RETURN
                 </button>
-                <div class="text-[9px] text-cosmic-muted tracking-widest opacity-60">
+                <div class="text-[8px] text-cosmic-muted tracking-widest opacity-60">
                     BUILT BY <a href="https://github.com/codxbrexx" target="_blank"
                         class="text-white hover:text-cyan-400 underline transition-all">CODXBREXX</a>
                 </div>
@@ -187,41 +225,41 @@
 
         <!-- Game Over Modal -->
         <div id="game-over"
-            class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-cosmic-text z-20 w-[92%] md:w-auto p-6 bg-black/90 border-2 border-red-600 shadow-[0_0_40px_rgba(255,0,0,0.3)]">
+            class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-cosmic-text z-20 w-[92%] sm:w-auto p-4 sm:p-6 bg-black/90 border-2 border-red-600 shadow-[0_0_40px_rgba(255,0,0,0.3)]">
             <h2
-                class="text-cosmic-danger text-2xl sm:text-3xl md:text-[36px] mb-2 font-press-start uppercase m-0 leading-tight tracking-widest text-shadow-md">
+                class="text-cosmic-danger text-lg sm:text-2xl md:text-[32px] mb-1.5 font-press-start uppercase m-0 leading-tight tracking-widest text-shadow-md">
                 MISSION FAILED</h2>
             
-            <div id="new-high-badge" class="hidden my-2 text-xs text-yellow-400 tracking-widest animate-pulse">
+            <div id="new-high-badge" class="hidden my-1.5 text-[9px] sm:text-xs text-yellow-400 tracking-widest animate-pulse">
                 🏆 NEW HIGH SCORE! 🏆
             </div>
 
-            <div class="my-4 space-y-1.5 font-press-start">
-                <p class="text-sm md:text-base text-white">SCORE: <span id="final-score" class="text-cyan-400">0</span></p>
-                <p id="game-over-high" class="text-[10px] md:text-xs text-gray-400">BEST: 0</p>
-                <p id="game-over-coins" class="text-[10px] md:text-xs text-yellow-400">COINS: 0</p>
+            <div class="my-3 space-y-1 font-press-start">
+                <p class="text-xs sm:text-sm md:text-base text-white">SCORE: <span id="final-score" class="text-cyan-400">0</span></p>
+                <p id="game-over-high" class="text-[9px] sm:text-[10px] md:text-xs text-gray-400">BEST: 0</p>
+                <p id="game-over-coins" class="text-[9px] sm:text-[10px] md:text-xs text-yellow-400">COINS: 0</p>
             </div>
 
-            <div class="flex flex-col gap-3 mt-5 items-center w-full">
+            <div class="flex flex-col gap-2.5 mt-4 items-center w-full">
                 <button id="btn-relaunch"
-                    class="mode-btn font-press-start text-xs sm:text-sm px-8 py-3.5 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[260px] cursor-pointer">
+                    class="mode-btn font-press-start text-[10px] sm:text-xs px-6 py-3 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[240px] cursor-pointer">
                     RELAUNCH
                 </button>
                 <button id="btn-return-menu"
-                    class="mode-btn font-press-start text-[10px] sm:text-xs px-6 py-3 bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[220px] cursor-pointer">
+                    class="mode-btn font-press-start text-[9px] sm:text-[10px] px-5 py-2.5 bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[200px] cursor-pointer">
                     RETURN TO BASE
                 </button>
             </div>
         </div>
 
         <!-- 2:1 Aspect Ratio Canvas -->
-        <canvas id="gameCanvas" class="block w-full h-full" style="image-rendering: pixelated;"></canvas>
+        <canvas id="gameCanvas" class="block w-full h-full"></canvas>
     </div>
 
-    <!-- Instructions Banner -->
+    <!-- Instructions Banner (Desktop / Large screen hint) -->
     <div id="instructions"
-        class="glass-panel hidden mt-3 p-2.5 px-4 text-cosmic-text text-[9px] md:text-xs leading-[1.4] z-10 pointer-events-none text-center w-auto max-w-[1200px] bg-white/5 border border-white/20 rounded-md">
-        <p class="text-cosmic-accent-strong mb-1"><strong>MISSION CONTROL</strong></p>
+        class="glass-panel hidden mt-2 p-2 px-3 text-cosmic-text text-[8px] sm:text-[10px] md:text-xs leading-[1.4] z-10 pointer-events-none text-center w-auto max-w-[1200px] bg-white/5 border border-white/20 rounded-md">
+        <p class="text-cosmic-accent-strong mb-0.5"><strong>MISSION CONTROL</strong></p>
         Select a Mode to begin flight.
     </div>
 

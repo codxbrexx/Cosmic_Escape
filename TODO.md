@@ -19,6 +19,14 @@
   - Added dynamic `FloatingText.js` indicators (`+100`, `+1 LIFE`, `EMP CHARGED!`, etc.).
   - Fixed high-score string-comparison bug where scores stored as strings caused erratic record updates.
   - Real-time high-score tracking in HUD and animated "NEW HIGH SCORE!" celebration badge on the Game Over screen.
+- [x] **Small Device & Mobile Optimization**:
+  - Implemented responsive mobile viewport with `100dvh` support to eliminate URL bar jump glitches.
+  - Added on-screen virtual arcade touch controls: Steering pad (`◀` `▶`) on bottom-left and Thrust button (`▲ FLY`) on bottom-right with visual feedback and haptic vibration (`navigator.vibrate`).
+  - Retained full-screen gesture controls (tap & hold to thrust, slide horizontally to steer) as an alternative control style.
+  - Fullscreen toggle button (`⛶`) integrated via the HTML5 Fullscreen API for edge-to-edge native mobile app feeling.
+  - Mobile landscape fitting: Container expands to full screen height (`100dvh`) in landscape orientation with zero letterboxing.
+  - Added dynamic portrait orientation guide (`📱 Rotate to Landscape`) for small screens.
+  - Optimized typography, touch target padding, and modal sizing for compact screens down to 320px.
 - [x] **Launch Readiness & Visual Polish**:
   - Fixed 2:1 aspect ratio in `index.html` container to eliminate vertical stretching of canvas pixels.
   - Applied `image-rendering: pixelated` on canvas for sharp retro pixel aesthetics.
@@ -26,9 +34,13 @@
   - Added on-screen pause button for mobile/touch users.
   - Streamlined `vite.config.js` and verified clean production builds (`npm run build`).
 
-## Future Feature Ideas (Optional)
+## Future Roadmap Ideas
 
-1. **Ship Customization / Skins**: Unlockable ship colorways or retro chassis using collected coins.
-2. **Global Leaderboard**: Backend integration (e.g. Firebase or Supabase) for world high scores.
-3. **PWA (Progressive Web App)**: Add `manifest.json` and a service worker to make the game installable on phones/desktops offline.
-4. **Haptic Feedback**: Use `navigator.vibrate([30])` on mobile devices for subtle impact feedback.
+1. **Global & Regional Leaderboard**: Firebase / Supabase integration for community high scores.
+2. **PWA (Progressive Web App)**: Add `manifest.json` and service worker for full offline home-screen installation.
+3. **Ship Hangar & Unlockable Skins**: Redeem collected coins for visual upgrades (e.g. Plasma Violet, Solar Gold, Matrix Green).
+4. **Add boss rush 30 sec timer that countdown and thenboss appears
+5 make more difficult ot the survival mode 
+
+additional feature to make this game  more appeling like show the just high scoror in the leaderboard one 
+

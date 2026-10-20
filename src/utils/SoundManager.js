@@ -1,4 +1,4 @@
-// Procedural Web Audio API Sound Synthesizer (No external assets required)
+// Procedural Web Audio API Sound Synthesizer & Mobile Haptics
 export class SoundManager {
     constructor() {
         this.ctx = null;
@@ -38,6 +38,15 @@ export class SoundManager {
         return this.muted;
     }
 
+    // Mobile Haptic Feedback
+    vibrate(pattern = 15) {
+        try {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(pattern);
+            }
+        } catch (_) {}
+    }
+
     // Sound effect: Thruster hum
     playThrust() {
         if (this.muted || !this.ctx) return;
@@ -67,6 +76,7 @@ export class SoundManager {
 
     // Sound effect: Coin pickup (bright dual-tone chime)
     playCoin() {
+        this.vibrate(20);
         if (this.muted) return;
         this.ensureContext();
         if (!this.ctx) return;
@@ -93,6 +103,7 @@ export class SoundManager {
 
     // Sound effect: Heart pickup (+1 Life)
     playHeart() {
+        this.vibrate([25, 20, 25]);
         if (this.muted) return;
         this.ensureContext();
         if (!this.ctx) return;
@@ -121,6 +132,7 @@ export class SoundManager {
 
     // Sound effect: Impact / Hit
     playHit() {
+        this.vibrate([40, 30, 40]);
         if (this.muted) return;
         this.ensureContext();
         if (!this.ctx) return;
@@ -147,13 +159,13 @@ export class SoundManager {
 
     // Sound effect: Explosion
     playExplosion() {
+        this.vibrate([50, 40, 60]);
         if (this.muted) return;
         this.ensureContext();
         if (!this.ctx) return;
 
         try {
             const now = this.ctx.currentTime;
-            // Generate white noise buffer
             const bufferSize = this.ctx.sampleRate * 0.4;
             const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
             const data = buffer.getChannelData(0);
@@ -164,7 +176,6 @@ export class SoundManager {
             const noise = this.ctx.createBufferSource();
             noise.buffer = buffer;
 
-            // Lowpass filter for deep rumble
             const filter = this.ctx.createBiquadFilter();
             filter.type = 'lowpass';
             filter.frequency.setValueAtTime(800, now);
@@ -184,13 +195,14 @@ export class SoundManager {
 
     // Sound effect: Level / Sector Cleared
     playSectorClear() {
+        this.vibrate([30, 50, 30, 50, 60]);
         if (this.muted) return;
         this.ensureContext();
         if (!this.ctx) return;
 
         try {
             const now = this.ctx.currentTime;
-            const notes = [440, 554.37, 659.25, 880]; // A major arpeggio
+            const notes = [440, 554.37, 659.25, 880];
             notes.forEach((freq, idx) => {
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
@@ -212,6 +224,7 @@ export class SoundManager {
 
     // Sound effect: Game Over
     playGameOver() {
+        this.vibrate([80, 50, 100]);
         if (this.muted) return;
         this.ensureContext();
         if (!this.ctx) return;
@@ -240,6 +253,7 @@ export class SoundManager {
 
     // Sound effect: UI Click
     playClick() {
+        this.vibrate(10);
         if (this.muted) return;
         this.ensureContext();
         if (!this.ctx) return;
