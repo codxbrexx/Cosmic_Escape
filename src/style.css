@@ -69,6 +69,94 @@ canvas {
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
 }
 
+/* Futuristic Cockpit Cyber Frame */
+.cockpit-frame {
+  position: relative;
+  border: 2px solid rgba(0, 255, 204, 0.5);
+  box-shadow: 0 0 30px rgba(0, 255, 204, 0.15), inset 0 0 30px rgba(0, 255, 204, 0.04);
+}
+
+/* Corner bracket accents */
+.corner-bracket {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+  z-index: 45;
+  border-color: #00FFCC;
+}
+
+.corner-tl { top: 6px; left: 6px; border-top: 2px solid #00FFCC; border-left: 2px solid #00FFCC; }
+.corner-tr { top: 6px; right: 6px; border-top: 2px solid #00FFCC; border-right: 2px solid #00FFCC; }
+.corner-bl { bottom: 6px; left: 6px; border-bottom: 2px solid #00FFCC; border-left: 2px solid #00FFCC; }
+.corner-br { bottom: 6px; right: 6px; border-bottom: 2px solid #00FFCC; border-right: 2px solid #00FFCC; }
+
+/* Mission Selection Cards */
+.mission-card {
+  position: relative;
+  background: linear-gradient(145deg, rgba(20, 25, 35, 0.85) 0%, rgba(5, 8, 15, 0.95) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+}
+
+.mission-card:hover {
+  transform: translateY(-2px) scale(1.01);
+  border-color: #00FFCC;
+  box-shadow: 0 8px 24px rgba(0, 255, 204, 0.25);
+}
+
+.mission-card:active {
+  transform: scale(0.98);
+}
+
+.mission-card.theme-classic:hover {
+  border-color: #00FFCC;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+}
+
+.mission-card.theme-story:hover {
+  border-color: #D946EF;
+  box-shadow: 0 0 20px rgba(217, 70, 239, 0.3);
+}
+
+.mission-card.theme-boss:hover {
+  border-color: #F59E0B;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+/* Glassmorphic HUD Panels */
+.hud-glass-badge {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Neon Text Radiance */
+.neon-glow-cyan {
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.7), 0 0 25px rgba(0, 255, 204, 0.4);
+}
+
+.neon-glow-gold {
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+/* Subtle CRT Scanline Texture */
+.scanlines-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.22) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 35;
+  opacity: 0.6;
+}
+
 /* Pulse animation for rotate suggestion */
 @keyframes tilt-phone {
   0%, 100% { transform: rotate(0deg); }

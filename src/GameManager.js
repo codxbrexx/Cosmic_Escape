@@ -50,6 +50,7 @@ export class GameManager {
         this.setupAuth();
         this.setupLeaderboard();
         this.setupHangar();
+        this.updateMenuCoinDisplay();
         this.startMenuLoop();
         this.updateGalaxyChampionTicker();
     }
@@ -238,6 +239,11 @@ export class GameManager {
         }
     }
 
+    updateMenuCoinDisplay() {
+        const el = document.getElementById('menu-coin-count');
+        if (el) el.innerText = SkinManager.getLifetimeCoins();
+    }
+
     setupHangar() {
         const hangarModal = document.getElementById('hangar-modal');
         const openHangarBtn = document.getElementById('btn-open-hangar');
@@ -255,6 +261,7 @@ export class GameManager {
             closeHangarBtn.addEventListener('click', () => {
                 sounds.playClick();
                 if (hangarModal) hangarModal.classList.add('hidden');
+                this.updateMenuCoinDisplay();
             });
         }
     }
@@ -266,6 +273,7 @@ export class GameManager {
 
         const lifetimeCoins = SkinManager.getLifetimeCoins();
         if (coinsEl) coinsEl.innerText = lifetimeCoins;
+        this.updateMenuCoinDisplay();
 
         const equippedId = SkinManager.getEquippedSkinId();
         gridEl.innerHTML = '';
@@ -705,6 +713,11 @@ export class GameManager {
 
         // Hide Menus & Show In-Game HUD
         document.getElementById('start-menu').classList.add('hidden');
+        const menuTopBar = document.getElementById('menu-top-bar');
+        if (menuTopBar) menuTopBar.classList.add('hidden');
+        const hudTop = document.getElementById('hud-top');
+        if (hudTop) hudTop.classList.remove('hidden');
+
         document.getElementById('game-over').classList.add('hidden');
         document.getElementById('about-modal').classList.add('hidden');
         document.getElementById('leaderboard-modal').classList.add('hidden');
@@ -806,6 +819,11 @@ export class GameManager {
         document.getElementById('pause-menu').style.display = 'none';
         document.getElementById('countdown-overlay').classList.add('hidden');
         document.getElementById('start-menu').classList.remove('hidden');
+        const menuTopBar = document.getElementById('menu-top-bar');
+        if (menuTopBar) menuTopBar.classList.remove('hidden');
+        const hudTop = document.getElementById('hud-top');
+        if (hudTop) hudTop.classList.add('hidden');
+
         document.getElementById('instructions').classList.add('hidden');
 
         const container = document.getElementById('game-container');
@@ -814,5 +832,6 @@ export class GameManager {
         }
 
         this.updateGalaxyChampionTicker();
+        this.updateMenuCoinDisplay();
     }
 }
