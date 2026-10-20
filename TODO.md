@@ -41,6 +41,11 @@ The core gameplay philosophy is **Pure Piloting Skill & Evasion**:
 - [x] **Galaxy Champion Ticker**: Start Menu marquee ticker featuring the #1 player across the galaxy.
 - [x] **Offline Fallback**: Curated local records so game and leaderboard never crash when offline or before Firebase is configured.
 
+### 5. Fleet Hangar (Ship Customization) & PWA Offline Install
+- [x] **Fleet Hangar & Coin Economy (`SkinManager.js`)**: Permanent coin banking across runs; spend credits to unlock 6 starfighter chassis (`NEON CYAN`, `PLASMA VIOLET`, `SOLAR GOLD`, `CYBER GREEN`, `CRIMSON PHOENIX`, `VOID PHANTOM`).
+- [x] **Custom Sprite & Exhaust FX**: Equipping a skin updates ship pixel-art tint, engine glow, and dual-stream ion exhaust particles.
+- [x] **PWA (Progressive Web App)**: Created `manifest.webmanifest`, SVG pixel-art favicons, and offline Service Worker (`sw.js`). Ready for full native home-screen installation on iOS, Android, and Desktop.
+
 ---
 
 ## 🗄️ Firebase Data Model: What is Recorded

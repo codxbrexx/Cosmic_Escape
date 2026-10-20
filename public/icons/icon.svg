@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="192" height="192">
+  <rect width="64" height="64" rx="14" fill="#000000"/>
+  <circle cx="12" cy="14" r="1.5" fill="#ffffff" opacity="0.6"/>
+  <circle cx="52" cy="18" r="1" fill="#00ffcc" opacity="0.8"/>
+  <circle cx="48" cy="50" r="1.5" fill="#ffffff" opacity="0.5"/>
+  <circle cx="16" cy="48" r="1" fill="#ff00cc" opacity="0.7"/>
+  
+  <!-- Spaceship Pixel Body -->
+  <polygon points="16,32 38,18 46,26 46,38 38,46" fill="#00FFCC"/>
+  <polygon points="34,26 42,30 42,34 34,38" fill="#FFFFFF" opacity="0.9"/>
+  <polygon points="20,18 28,18 24,32" fill="#00B894"/>
+  <polygon points="20,46 28,46 24,32" fill="#00B894"/>
+  <rect x="12" y="27" width="5" height="10" fill="#FF00CC"/>
+  <polygon points="6,32 12,28 12,36" fill="#00FFFF"/>
+  <polygon points="2,32 8,30 8,34" fill="#FF00CC"/>
+</svg>

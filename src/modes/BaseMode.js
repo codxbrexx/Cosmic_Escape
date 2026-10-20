@@ -4,6 +4,7 @@ import { Particle } from '../entities/Particle.js';
 import { FloatingText } from '../entities/FloatingText.js';
 import { ScoreManager } from '../utils/ScoreManager.js';
 import { LeaderboardManager } from '../utils/LeaderboardManager.js';
+import { SkinManager } from '../utils/SkinManager.js';
 import { sounds } from '../utils/SoundManager.js';
 import {
     CANVAS_WIDTH, CANVAS_HEIGHT, GAME_SPEED_START, COLOR_ASTEROID, COLOR_COIN
@@ -91,6 +92,7 @@ export class BaseMode {
     collectCoin(c) {
         c.markedForDeletion = true;
         this.coinsCollected++;
+        SkinManager.addCoins(1);
         const points = 100;
         this.addScore(points);
         sounds.playCoin();

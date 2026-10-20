@@ -7,6 +7,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <link rel="manifest" href="./manifest.webmanifest">
     <title>Cosmic Escape</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
@@ -61,7 +63,11 @@
                 <span id="ticker-text">GALAXY CHAMPION: LOADING...</span>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-3 mt-3 sm:mt-4">
+            <div class="flex flex-wrap justify-center items-center gap-2 sm:gap-2.5 mt-3 sm:mt-4">
+                <button id="btn-open-hangar"
+                    class="mode-btn font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-cyan-400 border border-cyan-400/80 cursor-pointer transition-all uppercase hover:bg-cyan-400 hover:text-black text-[8px] sm:text-[10px]">
+                    🛸 HANGAR
+                </button>
                 <button id="btn-open-leaderboard"
                     class="mode-btn font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-yellow-400 border border-yellow-400/80 cursor-pointer transition-all uppercase hover:bg-yellow-400 hover:text-black text-[8px] sm:text-[10px]">
                     🏆 RANKS
@@ -170,6 +176,40 @@
             </h1>
         </div>
 
+        <!-- Fleet Hangar Modal (Ship Skins & Economy) -->
+        <div id="hangar-modal"
+            class="hidden absolute top-0 left-0 w-full h-full bg-black/95 z-[65] text-white p-3 sm:p-6 box-border overflow-y-auto flex flex-col">
+            
+            <div class="flex items-center justify-between border-b-2 border-cyan-400/60 pb-2 mb-3 max-w-[850px] mx-auto w-full">
+                <div class="flex items-center gap-2">
+                    <span class="text-base sm:text-xl">🛸</span>
+                    <h2 class="text-xs sm:text-base md:text-lg tracking-[2px] uppercase text-cyan-300">FLEET HANGAR</h2>
+                </div>
+                <div class="text-[8px] sm:text-[10px] px-2.5 py-1 bg-yellow-500/20 text-yellow-300 border border-yellow-400/40 rounded flex items-center gap-1.5">
+                    <span>🪙 BANK:</span>
+                    <span id="hangar-coins" class="font-bold">0</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-3 max-w-[850px] mx-auto w-full flex-grow">
+                <p class="text-[8px] sm:text-[9px] text-gray-400 text-center uppercase tracking-widest">
+                    CUSTOMIZE YOUR STARFIGHTER CHASSIS & ION THRUSTERS
+                </p>
+
+                <!-- Skins Grid -->
+                <div id="hangar-skins-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3 overflow-y-auto max-h-[48dvh] p-1">
+                    <!-- Rendered by SkinManager in GameManager -->
+                </div>
+            </div>
+
+            <div class="mt-auto pt-3 flex justify-center">
+                <button id="btn-close-hangar"
+                    class="mode-btn font-press-start bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase px-6 py-2 text-[9px] sm:text-xs">
+                    RETURN TO BASE
+                </button>
+            </div>
+        </div>
+
         <!-- Global & Regional Leaderboard Modal -->
         <div id="leaderboard-modal"
             class="hidden absolute top-0 left-0 w-full h-full bg-black/95 z-[65] text-white p-3 sm:p-6 box-border overflow-y-auto flex flex-col">
@@ -218,7 +258,6 @@
                     </div>
                     
                     <div id="leaderboard-list" class="space-y-1 text-[8px] sm:text-[10px]">
-                        <!-- Rendered by LeaderboardManager -->
                         <div class="py-4 text-center text-gray-400 animate-pulse text-[8px]">SCANNING HYPERSPACE RECORDS...</div>
                     </div>
                 </div>
@@ -280,7 +319,7 @@
                         <p class="text-gray-400 text-[8px] sm:text-[9px] leading-relaxed">
                             Agility test.<br>
                             - Survive 30s per wave.<br>
-                            - Wave Clear: +3000 PTS & +1 Life.<br>
+                            - Defeat intercepting Mothership.<br>
                             - Pure evasion reflexes.
                         </p>
                     </div>

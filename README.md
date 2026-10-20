@@ -42,11 +42,27 @@ Fully optimized for **Desktop** (Keyboard) and **Mobile / Tablet** (Touch & Hapt
 
 ---
 
+## 🛸 Fleet Hangar & Ship Customization
+
+Spend credits collected during flights to unlock and equip custom starfighter chassis in the Fleet Hangar:
+* 🚀 **NEON CYAN**: Standard-issue fighter.
+* 🟣 **PLASMA VIOLET**: Dark nebula plasma hull.
+* 🟡 **SOLAR GOLD**: Polished aurum plating.
+* 🟢 **CYBER GREEN**: Hyper-matrix ion thrusters.
+* 🔴 **CRIMSON PHOENIX**: Stellar flare superalloy.
+* ⚪ **VOID PHANTOM**: Deep-space stealth composite.
+
+Each chassis features custom hull pixel art, engine glow, and matching dual-stream ion particle trails.
+
+---
+
 ## 🛠️ Architecture & Tech Stack
 
 * **Game Engine**: Custom object-oriented Canvas engine with unified `BaseMode` architecture.
+* **Backend & Auth**: Firebase Firestore + Google Auth with offline fallback.
 * **Audio Synthesizer & Haptics**: Procedural Web Audio API sound generator + Navigator Vibrate API.
-* **Score System**: Type-safe local storage score manager with real-time high score tracking per mode.
+* **Score & Economy**: Type-safe local score manager + `SkinManager` persistent coin banking.
+* **PWA & Offline**: Installable progressive web app with Service Worker (`sw.js`).
 * **Responsive Styling**: Tailwind CSS, CSS dynamic viewport (`100dvh`), and Press Start 2P typography.
 * **Build Tool**: Vite.
 

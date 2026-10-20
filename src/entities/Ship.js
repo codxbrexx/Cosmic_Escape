@@ -1,7 +1,8 @@
 import { shipSprite } from '../utils/Sprite.js';
 import { Particle } from './Particle.js';
-import { CANVAS_WIDTH, CANVAS_HEIGHT, COLOR_SHIP, COLOR_ENGINE } from '../constants.js';
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants.js';
 import { sounds } from '../utils/SoundManager.js';
+import { SkinManager } from '../utils/SkinManager.js';
 
 export class Ship {
     constructor(config = {}) {
@@ -16,6 +17,9 @@ export class Ship {
         this.gravity = config.gravity || 0.22;
         this.thrust = config.thrust || -5.5;
         this.drag = config.drag || 0.96;
+
+        // Equipped Cosmetic Skin
+        this.skin = SkinManager.getEquippedSkin();
     }
 
     update(particles, frameCount, invulnerableTimer, loseLifeCallback, createExplosionCallback, dt = 1) {
@@ -24,11 +28,10 @@ export class Ship {
             this.vy += this.thrust * 0.10 * dt;
             sounds.playThrust();
 
-            // Ion Thruster Particles streaming out from the rear engines
+            // Ion Thruster Particles matching equipped chassis colors
             if (frameCount % 2 === 0) {
-                // Two engine exhaust streams
-                particles.push(new Particle(this.x - 4, this.y + this.height * 0.65, '#00FFFF', 4, 3));
-                particles.push(new Particle(this.x - 2, this.y + this.height * 0.85, '#FF00CC', 3, 2.5));
+                particles.push(new Particle(this.x - 4, this.y + this.height * 0.65, this.skin.exhaustPrimary, 4, 3));
+                particles.push(new Particle(this.x - 2, this.y + this.height * 0.85, this.skin.exhaustSecondary, 3, 2.5));
             }
         }
 
@@ -56,7 +59,7 @@ export class Ship {
         if (this.y + this.height > CANVAS_HEIGHT) {
             this.y = CANVAS_HEIGHT - this.height;
             if (invulnerableTimer <= 0) {
-                loseLifeCallback();
+                loseLifeCallback('lower_barrier');
                 createExplosionCallback(this.x + this.width / 2, this.y + this.height, '#FF4444');
                 this.vy = -10; // Bounce off the lower barrier
             }
@@ -67,12 +70,12 @@ export class Ship {
         // Thruster glow when thrusting
         if (this.thrusting) {
             ctx.save();
-            ctx.shadowColor = '#00FFFF';
-            ctx.shadowBlur = 10;
-            shipSprite.draw(ctx, this.x, this.y, 0, COLOR_SHIP);
+            ctx.shadowColor = this.skin.engineGlow;
+            ctx.shadowBlur = 12;
+            shipSprite.draw(ctx, this.x, this.y, 0, this.skin.shipColor);
             ctx.restore();
         } else {
-            shipSprite.draw(ctx, this.x, this.y, 0, COLOR_SHIP);
+            shipSprite.draw(ctx, this.x, this.y, 0, this.skin.shipColor);
         }
     }
 }

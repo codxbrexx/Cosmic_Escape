@@ -6,6 +6,8 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants.js';
 import { sounds } from './utils/SoundManager.js';
 import { authManager } from './utils/AuthManager.js';
 import { LeaderboardManager } from './utils/LeaderboardManager.js';
+import { SkinManager, SHIP_SKINS } from './utils/SkinManager.js';
+import { shipSprite } from './utils/Sprite.js';
 import { detectUserRegion } from './utils/firebaseConfig.js';
 import gsap from 'gsap';
 
@@ -47,6 +49,7 @@ export class GameManager {
         this.setupOrientationHandler();
         this.setupAuth();
         this.setupLeaderboard();
+        this.setupHangar();
         this.startMenuLoop();
         this.updateGalaxyChampionTicker();
     }
@@ -98,7 +101,6 @@ export class GameManager {
         if (authBtn) authBtn.addEventListener('click', handleAuthAction);
         if (lbGoogleBtn) lbGoogleBtn.addEventListener('click', handleAuthAction);
 
-        // Allow guest to change their callsign by clicking their name
         if (pilotNameEl) {
             pilotNameEl.addEventListener('click', () => {
                 const profile = authManager.getProfile();
@@ -145,7 +147,6 @@ export class GameManager {
             });
         }
 
-        // Scope Switchers (Global vs Regional)
         if (tabGlobal && tabRegional) {
             tabGlobal.addEventListener('click', () => {
                 sounds.playClick();
@@ -168,7 +169,6 @@ export class GameManager {
             });
         }
 
-        // Mode Switchers
         const modeButtons = document.querySelectorAll('.lb-mode-btn');
         modeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -236,6 +236,120 @@ export class GameManager {
             console.error('Error rendering leaderboard:', e);
             listEl.innerHTML = `<div class="py-4 text-center text-red-400 text-[8px]">COMMUNICATION FAILURE</div>`;
         }
+    }
+
+    setupHangar() {
+        const hangarModal = document.getElementById('hangar-modal');
+        const openHangarBtn = document.getElementById('btn-open-hangar');
+        const closeHangarBtn = document.getElementById('btn-close-hangar');
+
+        if (openHangarBtn) {
+            openHangarBtn.addEventListener('click', () => {
+                sounds.playClick();
+                if (hangarModal) hangarModal.classList.remove('hidden');
+                this.renderHangarSkins();
+            });
+        }
+
+        if (closeHangarBtn) {
+            closeHangarBtn.addEventListener('click', () => {
+                sounds.playClick();
+                if (hangarModal) hangarModal.classList.add('hidden');
+            });
+        }
+    }
+
+    renderHangarSkins() {
+        const coinsEl = document.getElementById('hangar-coins');
+        const gridEl = document.getElementById('hangar-skins-grid');
+        if (!gridEl) return;
+
+        const lifetimeCoins = SkinManager.getLifetimeCoins();
+        if (coinsEl) coinsEl.innerText = lifetimeCoins;
+
+        const equippedId = SkinManager.getEquippedSkinId();
+        gridEl.innerHTML = '';
+
+        SHIP_SKINS.forEach(skin => {
+            const isUnlocked = SkinManager.isUnlocked(skin.id);
+            const isEquipped = skin.id === equippedId;
+
+            const card = document.createElement('div');
+            card.className = `p-2.5 sm:p-3 rounded border ${isEquipped ? 'border-cyan-400 bg-cyan-950/30' : 'border-white/20 bg-white/5'} flex flex-col justify-between`;
+
+            // Preview Canvas
+            const canvasContainer = document.createElement('div');
+            canvasContainer.className = 'w-full h-16 sm:h-20 flex items-center justify-center bg-black/60 rounded border border-white/10 mb-2 relative overflow-hidden';
+            
+            const previewCanvas = document.createElement('canvas');
+            previewCanvas.width = 80;
+            previewCanvas.height = 50;
+            previewCanvas.className = 'w-20 h-12 image-pixelated';
+            const pCtx = previewCanvas.getContext('2d');
+            
+            // Draw preview star & ship
+            pCtx.fillStyle = '#111';
+            pCtx.fillRect(0, 0, 80, 50);
+            pCtx.save();
+            pCtx.shadowColor = skin.engineGlow;
+            pCtx.shadowBlur = 8;
+            shipSprite.draw(pCtx, 16, 12, 0, skin.shipColor);
+            pCtx.restore();
+
+            canvasContainer.appendChild(previewCanvas);
+            card.appendChild(canvasContainer);
+
+            // Details
+            const titleEl = document.createElement('div');
+            titleEl.className = 'text-[9px] sm:text-[10px] font-bold text-white mb-1';
+            titleEl.style.color = skin.shipColor;
+            titleEl.innerText = skin.name;
+            card.appendChild(titleEl);
+
+            const descEl = document.createElement('div');
+            descEl.className = 'text-[7px] sm:text-[8px] text-gray-400 mb-2 leading-tight';
+            descEl.innerText = skin.description;
+            card.appendChild(descEl);
+
+            // Action Button
+            const actionContainer = document.createElement('div');
+            actionContainer.className = 'mt-auto pt-1';
+
+            if (isEquipped) {
+                actionContainer.innerHTML = `<span class="block text-center text-[7px] sm:text-[8px] px-2 py-1 bg-cyan-500/30 text-cyan-300 border border-cyan-400 rounded font-bold">EQUIPPED</span>`;
+            } else if (isUnlocked) {
+                const equipBtn = document.createElement('button');
+                equipBtn.className = 'w-full text-[7px] sm:text-[8px] px-2 py-1 bg-black text-white border border-white hover:bg-white hover:text-black font-press-start rounded transition-all cursor-pointer';
+                equipBtn.innerText = 'EQUIP';
+                equipBtn.addEventListener('click', () => {
+                    SkinManager.equipSkin(skin.id);
+                    sounds.playClick();
+                    this.renderHangarSkins();
+                });
+                actionContainer.appendChild(equipBtn);
+            } else {
+                const unlockBtn = document.createElement('button');
+                const canAfford = lifetimeCoins >= skin.cost;
+                unlockBtn.className = `w-full text-[7px] sm:text-[8px] px-2 py-1 ${canAfford ? 'bg-yellow-400 text-black hover:bg-yellow-300' : 'bg-gray-800 text-gray-500 cursor-not-allowed'} font-press-start rounded transition-all cursor-pointer`;
+                unlockBtn.innerText = `🪙 ${skin.cost} UNLOCK`;
+                unlockBtn.addEventListener('click', () => {
+                    if (!canAfford) {
+                        sounds.playHit();
+                        alert(`Need ${skin.cost - lifetimeCoins} more credits! Collect coins during flights.`);
+                        return;
+                    }
+                    const res = SkinManager.unlockSkin(skin.id);
+                    if (res.success) {
+                        sounds.playCoin();
+                        this.renderHangarSkins();
+                    }
+                });
+                actionContainer.appendChild(unlockBtn);
+            }
+
+            card.appendChild(actionContainer);
+            gridEl.appendChild(card);
+        });
     }
 
     async updateGalaxyChampionTicker() {
@@ -438,7 +552,6 @@ export class GameManager {
         bindButton(touchRight, 'ArrowRight');
         bindButton(touchThrust, 'ArrowUp');
 
-        // Global Canvas Gestures
         let touchStartX = 0;
 
         const handleCanvasTouchStart = (e) => {
@@ -493,7 +606,6 @@ export class GameManager {
         gameContainer.addEventListener('touchend', handleCanvasTouchEnd, { passive: false });
         gameContainer.addEventListener('touchcancel', handleCanvasTouchEnd, { passive: false });
 
-        // Mobile Pause Button
         const mobilePauseBtn = document.getElementById('mobile-pause-btn');
         if (mobilePauseBtn) {
             mobilePauseBtn.addEventListener('click', (e) => {
@@ -596,6 +708,8 @@ export class GameManager {
         document.getElementById('game-over').classList.add('hidden');
         document.getElementById('about-modal').classList.add('hidden');
         document.getElementById('leaderboard-modal').classList.add('hidden');
+        const hangar = document.getElementById('hangar-modal');
+        if (hangar) hangar.classList.add('hidden');
         document.getElementById('pause-menu').classList.add('hidden');
         document.getElementById('instructions').classList.remove('hidden');
 
@@ -605,7 +719,7 @@ export class GameManager {
         if (modeType === 'STORY') {
             instr.innerHTML = `<p class="text-cosmic-accent-strong mb-0.5"><strong>GALACTIC ODYSSEY</strong></p>Fly with Arrows / Touch<br>Collect Hearts & EMP Cores to Evade Mothership!`;
         } else if (modeType === 'BOSS_RUSH') {
-            instr.innerHTML = `<p class="text-green-400 mb-0.5"><strong>SURVIVAL PROTOCOL</strong></p>Survive 30s per Wave<br>Pure Piloting Skill Required!`;
+            instr.innerHTML = `<p class="text-green-400 mb-0.5"><strong>SURVIVAL PROTOCOL</strong></p>Survive 30s Countdown -> Mothership Intercept!`;
         } else {
             instr.innerHTML = `<p class="text-cosmic-accent-strong mb-0.5"><strong>CLASSIC ARCADE</strong></p>Fly with Arrows / Touch<br>Dodge Hazards & Collect Coins for +100 PTS!`;
         }
