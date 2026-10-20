@@ -3,6 +3,9 @@ import { authManager } from './AuthManager.js';
 import {
     collection,
     addDoc,
+    doc,
+    setDoc,
+    increment,
     query,
     where,
     orderBy,
@@ -14,65 +17,88 @@ import {
 // Realistic curated fallback records when offline or before live Firebase is connected
 const MOCK_LEADERBOARDS = {
     CLASSIC: [
-        { pilotName: "NOVA_HUNTER", score: 14250, region: "AMERICAS", isUser: false },
-        { pilotName: "COSMIC_ACE", score: 11800, region: "INDIA", isUser: false },
-        { pilotName: "VOID_WALKER", score: 9400, region: "EUROPE", isUser: false },
-        { pilotName: "SOLAR_DRIFT", score: 8120, region: "ASIA", isUser: false },
-        { pilotName: "NEBULA_99", score: 6540, region: "OCEANIA", isUser: false },
-        { pilotName: "STAR_FOX", score: 5200, region: "AMERICAS", isUser: false },
-        { pilotName: "ASTRO_GHOST", score: 3950, region: "EUROPE", isUser: false },
-        { pilotName: "HYPER_PILOT", score: 2800, region: "INDIA", isUser: false },
+        { pilotName: "NOVA_HUNTER", score: 14250, region: "AMERICAS", isUser: false, flightDurationSec: 142, deviceType: "desktop" },
+        { pilotName: "COSMIC_ACE", score: 11800, region: "INDIA", isUser: false, flightDurationSec: 118, deviceType: "mobile" },
+        { pilotName: "VOID_WALKER", score: 9400, region: "EUROPE", isUser: false, flightDurationSec: 94, deviceType: "desktop" },
+        { pilotName: "SOLAR_DRIFT", score: 8120, region: "ASIA", isUser: false, flightDurationSec: 81, deviceType: "mobile" },
+        { pilotName: "NEBULA_99", score: 6540, region: "OCEANIA", isUser: false, flightDurationSec: 65, deviceType: "desktop" },
+        { pilotName: "STAR_FOX", score: 5200, region: "AMERICAS", isUser: false, flightDurationSec: 52, deviceType: "desktop" },
+        { pilotName: "ASTRO_GHOST", score: 3950, region: "EUROPE", isUser: false, flightDurationSec: 39, deviceType: "mobile" },
+        { pilotName: "HYPER_PILOT", score: 2800, region: "INDIA", isUser: false, flightDurationSec: 28, deviceType: "mobile" },
     ],
     STORY: [
-        { pilotName: "GALAXY_CONQ", score: 38500, region: "ASIA", isUser: false },
-        { pilotName: "WARP_RIDER", score: 31200, region: "EUROPE", isUser: false },
-        { pilotName: "ORBITAL_V", score: 24700, region: "AMERICAS", isUser: false },
-        { pilotName: "COSMOS_KING", score: 19800, region: "INDIA", isUser: false },
-        { pilotName: "CHRONO_JET", score: 14500, region: "OCEANIA", isUser: false },
-        { pilotName: "ZENITH_ONE", score: 11000, region: "EUROPE", isUser: false },
+        { pilotName: "GALAXY_CONQ", score: 38500, region: "ASIA", isUser: false, flightDurationSec: 280, deviceType: "desktop" },
+        { pilotName: "WARP_RIDER", score: 31200, region: "EUROPE", isUser: false, flightDurationSec: 240, deviceType: "mobile" },
+        { pilotName: "ORBITAL_V", score: 24700, region: "AMERICAS", isUser: false, flightDurationSec: 195, deviceType: "desktop" },
+        { pilotName: "COSMOS_KING", score: 19800, region: "INDIA", isUser: false, flightDurationSec: 160, deviceType: "mobile" },
+        { pilotName: "CHRONO_JET", score: 14500, region: "OCEANIA", isUser: false, flightDurationSec: 120, deviceType: "desktop" },
+        { pilotName: "ZENITH_ONE", score: 11000, region: "EUROPE", isUser: false, flightDurationSec: 90, deviceType: "mobile" },
     ],
     BOSS_RUSH: [
-        { pilotName: "SURVIVOR_X", score: 28400, region: "AMERICAS", isUser: false },
-        { pilotName: "APEX_DODGER", score: 21900, region: "INDIA", isUser: false },
-        { pilotName: "IRON_WING", score: 17300, region: "EUROPE", isUser: false },
-        { pilotName: "VOID_DRIFTER", score: 13500, region: "ASIA", isUser: false },
-        { pilotName: "ZERO_PULSE", score: 9800, region: "OCEANIA", isUser: false },
+        { pilotName: "SURVIVOR_X", score: 28400, region: "AMERICAS", isUser: false, flightDurationSec: 210, deviceType: "desktop" },
+        { pilotName: "APEX_DODGER", score: 21900, region: "INDIA", isUser: false, flightDurationSec: 175, deviceType: "mobile" },
+        { pilotName: "IRON_WING", score: 17300, region: "EUROPE", isUser: false, flightDurationSec: 140, deviceType: "desktop" },
+        { pilotName: "VOID_DRIFTER", score: 13500, region: "ASIA", isUser: false, flightDurationSec: 105, deviceType: "mobile" },
+        { pilotName: "ZERO_PULSE", score: 9800, region: "OCEANIA", isUser: false, flightDurationSec: 75, deviceType: "mobile" },
     ]
 };
 
 export class LeaderboardManager {
-    static COLLECTION_NAME = "cosmic_leaderboard";
+    static COLLECTION_RUNS = "cosmic_leaderboard";
+    static COLLECTION_USERS = "cosmic_users";
 
-    // Submit a completed run score
-    static async submitScore(mode, score, coins = 0) {
+    // Submit a completed flight run with rich telemetry
+    static async submitScore(mode, score, coins = 0, runMeta = {}) {
         const profile = authManager.getProfile();
         const numScore = Math.floor(score);
         if (numScore <= 0) return;
 
         const region = detectUserRegion();
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.innerWidth < 1024;
+        const deviceType = runMeta.deviceType || (isTouch ? 'mobile' : 'desktop');
+
         const entry = {
             userId: profile.uid,
             pilotName: profile.displayName || "UNKNOWN PILOT",
             photoURL: profile.photoURL || null,
+            isVerified: !profile.isGuest,
             score: numScore,
             coins: coins,
             mode: mode,
             region: region,
+            sectorOrWave: runMeta.sectorOrWave || 1,
+            flightDurationSec: runMeta.flightDurationSec || 0,
+            deathCause: runMeta.deathCause || 'collision',
+            deviceType: deviceType,
             createdAt: new Date().toISOString()
         };
 
-        // Cache locally
+        // Cache locally for offline availability
         this.saveLocalEntry(entry);
 
         // Upload to Firestore if configured
         if (isFirebaseConfigured && db) {
             try {
-                await addDoc(collection(db, this.COLLECTION_NAME), {
+                // 1. Record flight run entry
+                await addDoc(collection(db, this.COLLECTION_RUNS), {
                     ...entry,
                     timestamp: serverTimestamp()
                 });
+
+                // 2. Update player profile lifetime stats
+                const userRef = doc(db, this.COLLECTION_USERS, profile.uid);
+                await setDoc(userRef, {
+                    pilotName: entry.pilotName,
+                    photoURL: entry.photoURL,
+                    region: region,
+                    lastActive: serverTimestamp(),
+                    totalGamesPlayed: increment(1),
+                    lifetimeCoins: increment(coins),
+                    [`highestScore_${mode}`]: numScore
+                }, { merge: true });
+
             } catch (err) {
-                console.warn("Error submitting score to Firestore:", err);
+                console.warn("Error recording run to Firebase:", err);
             }
         }
     }
@@ -87,7 +113,7 @@ export class LeaderboardManager {
                 let q;
                 if (type === "REGIONAL") {
                     q = query(
-                        collection(db, this.COLLECTION_NAME),
+                        collection(db, this.COLLECTION_RUNS),
                         where("mode", "==", mode),
                         where("region", "==", userRegion),
                         orderBy("score", "desc"),
@@ -95,7 +121,7 @@ export class LeaderboardManager {
                     );
                 } else {
                     q = query(
-                        collection(db, this.COLLECTION_NAME),
+                        collection(db, this.COLLECTION_RUNS),
                         where("mode", "==", mode),
                         orderBy("score", "desc"),
                         limit(15)
@@ -113,16 +139,18 @@ export class LeaderboardManager {
                             photoURL: data.photoURL,
                             score: data.score,
                             region: data.region || "GLOBAL",
-                            isUser: data.userId === profile.uid
+                            isUser: data.userId === profile.uid,
+                            deviceType: data.deviceType || "desktop",
+                            flightDurationSec: data.flightDurationSec || 0
                         };
                     });
                 }
             } catch (err) {
-                console.warn("Firestore fetch failed, falling back to local leaderboard:", err);
+                console.warn("Firestore fetch failed, falling back to local records:", err);
             }
         }
 
-        // 2. Fallback to Local + Mock Leaderboard
+        // 2. Fallback to Local + Mock Records
         return this.getLocalLeaderboard(mode, type);
     }
 

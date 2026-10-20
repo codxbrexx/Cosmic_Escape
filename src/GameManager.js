@@ -4,6 +4,9 @@ import { BossRushMode } from './modes/BossRushMode.js';
 import { Star } from './entities/Star.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants.js';
 import { sounds } from './utils/SoundManager.js';
+import { authManager } from './utils/AuthManager.js';
+import { LeaderboardManager } from './utils/LeaderboardManager.js';
+import { detectUserRegion } from './utils/firebaseConfig.js';
 import gsap from 'gsap';
 
 export class GameManager {
@@ -14,6 +17,10 @@ export class GameManager {
         this.isPaused = false;
         this.isCountingDown = false;
         this._lastTimestamp = 0;
+
+        // Leaderboard state
+        this.lbCurrentMode = 'CLASSIC';
+        this.lbCurrentScope = 'GLOBAL';
 
         // Background menu stars
         this.menuStars = [];
@@ -38,7 +45,209 @@ export class GameManager {
         this.setupAudioToggle();
         this.setupFullscreenToggle();
         this.setupOrientationHandler();
+        this.setupAuth();
+        this.setupLeaderboard();
         this.startMenuLoop();
+        this.updateGalaxyChampionTicker();
+    }
+
+    setupAuth() {
+        const pilotNameEl = document.getElementById('pilot-name');
+        const pilotAvatarEl = document.getElementById('pilot-avatar');
+        const pilotIconEl = document.getElementById('pilot-icon');
+        const authBtn = document.getElementById('btn-auth-action');
+        const lbUserName = document.getElementById('lb-user-name');
+        const lbUserStatus = document.getElementById('lb-user-status');
+        const lbGoogleBtn = document.getElementById('lb-btn-google-login');
+
+        authManager.onAuthChange((profile) => {
+            if (profile.isAuthenticated) {
+                if (pilotNameEl) pilotNameEl.innerText = profile.displayName.slice(0, 14);
+                if (lbUserName) lbUserName.innerText = profile.displayName.slice(0, 14);
+                if (lbUserStatus) lbUserStatus.innerText = '(VERIFIED)';
+
+                if (profile.photoURL && pilotAvatarEl) {
+                    pilotAvatarEl.src = profile.photoURL;
+                    pilotAvatarEl.classList.remove('hidden');
+                    if (pilotIconEl) pilotIconEl.classList.add('hidden');
+                }
+                if (authBtn) authBtn.innerText = 'LOGOUT';
+                if (lbGoogleBtn) lbGoogleBtn.innerText = 'LOGOUT';
+            } else {
+                if (pilotNameEl) pilotNameEl.innerText = profile.displayName;
+                if (lbUserName) lbUserName.innerText = profile.displayName;
+                if (lbUserStatus) lbUserStatus.innerText = '(GUEST)';
+                if (pilotAvatarEl) pilotAvatarEl.classList.add('hidden');
+                if (pilotIconEl) pilotIconEl.classList.remove('hidden');
+                if (authBtn) authBtn.innerText = 'LOGIN';
+                if (lbGoogleBtn) lbGoogleBtn.innerText = 'G SIGN IN';
+            }
+        });
+
+        const handleAuthAction = async () => {
+            sounds.playClick();
+            const profile = authManager.getProfile();
+            if (profile.isAuthenticated) {
+                await authManager.logout();
+            } else {
+                await authManager.signInWithGoogle();
+            }
+            this.refreshLeaderboardView();
+        };
+
+        if (authBtn) authBtn.addEventListener('click', handleAuthAction);
+        if (lbGoogleBtn) lbGoogleBtn.addEventListener('click', handleAuthAction);
+
+        // Allow guest to change their callsign by clicking their name
+        if (pilotNameEl) {
+            pilotNameEl.addEventListener('click', () => {
+                const profile = authManager.getProfile();
+                if (profile.isGuest) {
+                    const newName = prompt('Enter Pilot Callsign (max 10 letters):', profile.displayName);
+                    if (newName) {
+                        authManager.setGuestCallsign(newName);
+                    }
+                }
+            });
+        }
+    }
+
+    setupLeaderboard() {
+        const lbModal = document.getElementById('leaderboard-modal');
+        const openBtn = document.getElementById('btn-open-leaderboard');
+        const closeBtn = document.getElementById('btn-close-leaderboard');
+        const gameOverLbBtn = document.getElementById('btn-game-over-leaderboard');
+        const championTicker = document.getElementById('galaxy-champion-ticker');
+
+        const tabGlobal = document.getElementById('lb-tab-global');
+        const tabRegional = document.getElementById('lb-tab-regional');
+        const regionLabel = document.getElementById('lb-detected-region');
+
+        if (regionLabel) {
+            regionLabel.innerText = detectUserRegion();
+        }
+
+        const openLeaderboard = (mode = 'CLASSIC') => {
+            sounds.playClick();
+            this.lbCurrentMode = mode;
+            if (lbModal) lbModal.classList.remove('hidden');
+            this.refreshLeaderboardView();
+        };
+
+        if (openBtn) openBtn.addEventListener('click', () => openLeaderboard(this.lbCurrentMode));
+        if (gameOverLbBtn) gameOverLbBtn.addEventListener('click', () => openLeaderboard(this.lbCurrentMode));
+        if (championTicker) championTicker.addEventListener('click', () => openLeaderboard('CLASSIC'));
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                sounds.playClick();
+                if (lbModal) lbModal.classList.add('hidden');
+            });
+        }
+
+        // Scope Switchers (Global vs Regional)
+        if (tabGlobal && tabRegional) {
+            tabGlobal.addEventListener('click', () => {
+                sounds.playClick();
+                this.lbCurrentScope = 'GLOBAL';
+                tabGlobal.classList.add('border-white', 'bg-white', 'text-black');
+                tabGlobal.classList.remove('border-white/40', 'bg-black', 'text-white');
+                tabRegional.classList.add('border-white/40', 'bg-black', 'text-white');
+                tabRegional.classList.remove('border-white', 'bg-white', 'text-black');
+                this.refreshLeaderboardView();
+            });
+
+            tabRegional.addEventListener('click', () => {
+                sounds.playClick();
+                this.lbCurrentScope = 'REGIONAL';
+                tabRegional.classList.add('border-white', 'bg-white', 'text-black');
+                tabRegional.classList.remove('border-white/40', 'bg-black', 'text-white');
+                tabGlobal.classList.add('border-white/40', 'bg-black', 'text-white');
+                tabGlobal.classList.remove('border-white', 'bg-white', 'text-black');
+                this.refreshLeaderboardView();
+            });
+        }
+
+        // Mode Switchers
+        const modeButtons = document.querySelectorAll('.lb-mode-btn');
+        modeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sounds.playClick();
+                modeButtons.forEach(b => {
+                    b.classList.remove('active', 'border-cyan-400', 'bg-cyan-400', 'text-black');
+                    b.classList.add('border-white/40', 'bg-black', 'text-white');
+                });
+                btn.classList.add('active', 'border-cyan-400', 'bg-cyan-400', 'text-black');
+                btn.classList.remove('border-white/40', 'bg-black', 'text-white');
+                this.lbCurrentMode = btn.dataset.mode;
+                this.refreshLeaderboardView();
+            });
+        });
+    }
+
+    async refreshLeaderboardView() {
+        const listEl = document.getElementById('leaderboard-list');
+        if (!listEl) return;
+
+        listEl.innerHTML = `<div class="py-4 text-center text-gray-400 animate-pulse text-[8px]">SCANNING HYPERSPACE RECORDS...</div>`;
+
+        try {
+            const scores = await LeaderboardManager.getLeaderboard(this.lbCurrentMode, this.lbCurrentScope);
+            if (!scores || scores.length === 0) {
+                listEl.innerHTML = `<div class="py-4 text-center text-gray-400 text-[8px]">NO HYPERSPACE RECORDS FOUND YET</div>`;
+                return;
+            }
+
+            let html = '';
+            scores.forEach((entry, idx) => {
+                const rank = idx + 1;
+                let rankBadge = `#${rank}`;
+                let rankColor = 'text-gray-300';
+                let rowBg = entry.isUser ? 'bg-cyan-950/40 border border-cyan-400/60' : 'bg-white/5 border border-transparent';
+
+                if (rank === 1) {
+                    rankBadge = `🥇 #1`;
+                    rankColor = 'text-yellow-400 font-bold';
+                } else if (rank === 2) {
+                    rankBadge = `🥈 #2`;
+                    rankColor = 'text-gray-200 font-bold';
+                } else if (rank === 3) {
+                    rankBadge = `🥉 #3`;
+                    rankColor = 'text-amber-600 font-bold';
+                }
+
+                const userTag = entry.isUser ? `<span class="ml-1 text-[7px] text-cyan-300 font-bold">[YOU]</span>` : '';
+
+                html += `
+                    <div class="grid grid-cols-12 items-center p-1.5 rounded ${rowBg} transition-all hover:bg-white/10">
+                        <div class="col-span-2 text-center text-[7px] sm:text-[9px] ${rankColor}">${rankBadge}</div>
+                        <div class="col-span-5 truncate text-white font-bold flex items-center">
+                            <span>${entry.pilotName}</span>
+                            ${userTag}
+                        </div>
+                        <div class="col-span-2 text-center text-[7px] sm:text-[8px] text-cyan-400/80">${entry.region || 'GLOBAL'}</div>
+                        <div class="col-span-3 text-right text-yellow-400 font-bold tracking-wider">${entry.score}</div>
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+        } catch (e) {
+            console.error('Error rendering leaderboard:', e);
+            listEl.innerHTML = `<div class="py-4 text-center text-red-400 text-[8px]">COMMUNICATION FAILURE</div>`;
+        }
+    }
+
+    async updateGalaxyChampionTicker() {
+        const tickerText = document.getElementById('ticker-text');
+        if (!tickerText) return;
+
+        try {
+            const champion = await LeaderboardManager.getTopChampion('CLASSIC');
+            if (champion) {
+                tickerText.innerText = `GALAXY CHAMPION: ${champion.pilotName} - ${champion.score} PTS (${champion.region})`;
+            }
+        } catch (_) {}
     }
 
     setupFullscreenToggle() {
@@ -190,7 +399,6 @@ export class GameManager {
         const touchRight = document.getElementById('touch-right');
         const touchThrust = document.getElementById('touch-thrust');
 
-        // Helper to bind tactile button touch events
         const bindButton = (btn, key) => {
             if (!btn) return;
 
@@ -214,7 +422,6 @@ export class GameManager {
             btn.addEventListener('touchend', onEnd, { passive: false });
             btn.addEventListener('touchcancel', onEnd, { passive: false });
 
-            // Desktop click/mouse support for on-screen buttons
             btn.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
                 sounds.ensureContext();
@@ -231,21 +438,19 @@ export class GameManager {
         bindButton(touchRight, 'ArrowRight');
         bindButton(touchThrust, 'ArrowUp');
 
-        // Global Canvas Gestures (Tap & Drag anywhere as an alternative control)
+        // Global Canvas Gestures
         let touchStartX = 0;
 
         const handleCanvasTouchStart = (e) => {
             if (!this.isRunning || this.isPaused || this.isCountingDown) return;
             sounds.ensureContext();
 
-            // Ignore if tapped on a button
             if (e.target.closest('button')) return;
 
             e.preventDefault();
             const touch = e.touches[0];
             touchStartX = touch.clientX;
 
-            // Tap & hold anywhere thrusts
             this.keys['ArrowUp'] = true;
             sounds.vibrate(10);
         };
@@ -354,8 +559,6 @@ export class GameManager {
                 countdownOverlay.classList.add('hidden');
                 this.isPaused = false;
                 this.isCountingDown = false;
-
-                // Restore touch controls if mobile
                 this.updateTouchControlsVisibility();
             }
         }, 800);
@@ -392,6 +595,7 @@ export class GameManager {
         document.getElementById('start-menu').classList.add('hidden');
         document.getElementById('game-over').classList.add('hidden');
         document.getElementById('about-modal').classList.add('hidden');
+        document.getElementById('leaderboard-modal').classList.add('hidden');
         document.getElementById('pause-menu').classList.add('hidden');
         document.getElementById('instructions').classList.remove('hidden');
 
@@ -471,6 +675,7 @@ export class GameManager {
         }
 
         gsap.fromTo(gameOverEl, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4 });
+        this.updateGalaxyChampionTicker();
     }
 
     resetToMenu() {
@@ -493,5 +698,7 @@ export class GameManager {
         if (container) {
             container.style.borderColor = '#FFFFFF';
         }
+
+        this.updateGalaxyChampionTicker();
     }
 }

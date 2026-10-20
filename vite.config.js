@@ -6,6 +6,14 @@ export default defineConfig({
     build: {
         outDir: 'dist',
         emptyOutDir: true,
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+                    gsap: ['gsap'],
+                },
+            },
+        },
     },
     server: {
         port: 5173,

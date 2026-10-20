@@ -9,8 +9,10 @@
     <meta name="theme-color" content="#000000">
     <title>Cosmic Escape</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-CXmeSTMu.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-yLqVX4Rn.css">
+  <script type="module" crossorigin src="./assets/index-Bd73OYUa.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/firebase-C7hS2v4a.js">
+  <link rel="modulepreload" crossorigin href="./assets/gsap-CB87Sc6I.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-D5x61Obp.css">
 </head>
 
 <body
@@ -26,36 +28,56 @@
     <div id="game-container"
         class="relative w-full max-w-[1200px] aspect-[2/1] max-h-[100dvh] border-2 sm:border-4 border-white overflow-hidden transition-colors duration-500 bg-black shadow-[0_0_30px_rgba(255,255,255,0.15)] flex items-center justify-center">
         
+        <!-- Auth Profile Badge (Top Left in Menu) -->
+        <div id="pilot-profile-badge" class="absolute top-2 sm:top-3 left-2 sm:left-4 z-40 flex items-center gap-2 bg-white/10 backdrop-blur-md px-2.5 py-1.5 border border-white/30 rounded text-[8px] sm:text-[9px]">
+            <img id="pilot-avatar" class="hidden w-4 h-4 sm:w-5 sm:h-5 rounded-full border border-white/60 object-cover" alt="Avatar">
+            <span id="pilot-icon" class="text-xs">🧑‍🚀</span>
+            <span id="pilot-name" class="text-cyan-300 tracking-wider font-bold">PILOT-777</span>
+            <button id="btn-auth-action" class="ml-1 px-1.5 py-0.5 bg-black text-white border border-white/40 hover:bg-white hover:text-black transition-all text-[7px] sm:text-[8px] rounded uppercase cursor-pointer">
+                LOGIN
+            </button>
+        </div>
+
         <!-- Start Menu -->
         <div id="start-menu"
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] sm:w-[85%] md:w-[600px] h-auto flex flex-col justify-center items-center text-center z-30 py-3 sm:py-6">
-            <h1 class="title text-2xl sm:text-4xl md:text-[54px] leading-tight mb-2 sm:mb-4 text-cosmic-text tracking-widest text-shadow-lg">
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] sm:w-[85%] md:w-[600px] h-auto flex flex-col justify-center items-center text-center z-30 py-2 sm:py-5">
+            <h1 class="title text-2xl sm:text-4xl md:text-[52px] leading-tight mb-1 sm:mb-2 text-cosmic-text tracking-widest text-shadow-lg">
                 COSMIC<br>ESCAPE</h1>
-            <p class="subtitle text-[8px] sm:text-[11px] md:text-[13px] text-cosmic-muted mb-4 sm:mb-6 tracking-[3px] sm:tracking-[4px] uppercase">
+            <p class="subtitle text-[8px] sm:text-[10px] md:text-[12px] text-cosmic-muted mb-3 sm:mb-4 tracking-[3px] uppercase">
                 CHOOSE YOUR MISSION</p>
 
             <button id="btn-classic"
-                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-3 sm:py-4 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-1.5 hover:bg-white hover:text-black active:bg-gray-300">
+                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-2.5 sm:py-3.5 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-1 hover:bg-white hover:text-black active:bg-gray-300">
                 CLASSIC ARCADE
             </button>
             <button id="btn-story"
-                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-3 sm:py-4 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-2 hover:bg-white hover:text-black active:bg-gray-300">
+                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-2.5 sm:py-3.5 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-1.5 hover:bg-white hover:text-black active:bg-gray-300">
                 GALACTIC ODYSSEY
             </button>
             <button id="btn-bossrush"
-                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-3 sm:py-4 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-2 hover:bg-white hover:text-black active:bg-green-800">
+                class="mode-btn group font-press-start text-[10px] sm:text-xs md:text-sm w-full max-w-[280px] sm:max-w-[320px] px-4 sm:px-6 py-2.5 sm:py-3.5 bg-black text-white border-2 border-white cursor-pointer transition-all duration-100 uppercase mt-1.5 hover:bg-white hover:text-black active:bg-green-800">
                 SURVIVAL PROTOCOL
             </button>
 
-            <div class="flex items-center gap-2 sm:gap-3 mt-4 sm:mt-5">
-                <button id="btn-about"
-                    class="mode-btn font-press-start px-3 sm:px-4 py-2 sm:py-2.5 bg-black text-white border border-white cursor-pointer transition-all duration-200 uppercase hover:bg-white hover:text-black text-[9px] sm:text-[10px] md:text-xs">
-                    MISSION INTEL
+            <!-- Marquee Galaxy Champion Banner -->
+            <div id="galaxy-champion-ticker" class="cursor-pointer mt-2.5 sm:mt-3 px-3 py-1 bg-yellow-400/10 border border-yellow-400/40 rounded text-[7px] sm:text-[9px] text-yellow-300 tracking-wider flex items-center gap-1.5 hover:bg-yellow-400/20 transition-all">
+                <span>👑</span>
+                <span id="ticker-text">GALAXY CHAMPION: LOADING...</span>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3 mt-3 sm:mt-4">
+                <button id="btn-open-leaderboard"
+                    class="mode-btn font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-yellow-400 border border-yellow-400/80 cursor-pointer transition-all uppercase hover:bg-yellow-400 hover:text-black text-[8px] sm:text-[10px]">
+                    🏆 RANKS
                 </button>
-                <button class="btn-audio-toggle font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black text-xs sm:text-sm" title="Toggle Audio">
+                <button id="btn-about"
+                    class="mode-btn font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-white border border-white cursor-pointer transition-all uppercase hover:bg-white hover:text-black text-[8px] sm:text-[10px]">
+                    INTEL
+                </button>
+                <button class="btn-audio-toggle font-press-start px-2 sm:px-2.5 py-1.5 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black text-xs sm:text-sm" title="Toggle Audio">
                     🔊
                 </button>
-                <button id="btn-fullscreen-menu" class="btn-fullscreen font-press-start px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black text-xs sm:text-sm" title="Toggle Fullscreen">
+                <button id="btn-fullscreen-menu" class="btn-fullscreen font-press-start px-2 sm:px-2.5 py-1.5 bg-black text-white border border-white cursor-pointer hover:bg-white hover:text-black text-xs sm:text-sm" title="Toggle Fullscreen">
                     ⛶
                 </button>
             </div>
@@ -152,6 +174,82 @@
             </h1>
         </div>
 
+        <!-- Global & Regional Leaderboard Modal -->
+        <div id="leaderboard-modal"
+            class="hidden absolute top-0 left-0 w-full h-full bg-black/95 z-[65] text-white p-3 sm:p-6 box-border overflow-y-auto flex flex-col">
+            
+            <div class="flex items-center justify-between border-b-2 border-white/60 pb-2 mb-3 max-w-[850px] mx-auto w-full">
+                <div class="flex items-center gap-2">
+                    <span class="text-base sm:text-xl">🏆</span>
+                    <h2 class="text-xs sm:text-base md:text-lg tracking-[2px] uppercase">GALACTIC HALL OF FAME</h2>
+                </div>
+                <div id="leaderboard-region-badge" class="text-[8px] sm:text-[9px] px-2 py-1 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded">
+                    REGION: <span id="lb-detected-region">GLOBAL</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-3 max-w-[850px] mx-auto w-full flex-grow">
+                <!-- Scope Tabs: Global vs Regional -->
+                <div class="flex justify-center gap-2">
+                    <button id="lb-tab-global" class="px-3 sm:px-4 py-1.5 text-[8px] sm:text-[10px] font-press-start border-2 border-white bg-white text-black cursor-pointer transition-all">
+                        🌐 GLOBAL
+                    </button>
+                    <button id="lb-tab-regional" class="px-3 sm:px-4 py-1.5 text-[8px] sm:text-[10px] font-press-start border-2 border-white/40 bg-black text-white hover:border-white cursor-pointer transition-all">
+                        📍 REGIONAL
+                    </button>
+                </div>
+
+                <!-- Mode Filter Tabs: Classic | Odyssey | Survival -->
+                <div class="flex justify-center gap-1.5 sm:gap-2">
+                    <button class="lb-mode-btn active px-2 sm:px-3 py-1 text-[7px] sm:text-[9px] font-press-start border border-cyan-400 bg-cyan-400 text-black cursor-pointer" data-mode="CLASSIC">
+                        CLASSIC
+                    </button>
+                    <button class="lb-mode-btn px-2 sm:px-3 py-1 text-[7px] sm:text-[9px] font-press-start border border-white/40 bg-black text-white hover:border-white cursor-pointer" data-mode="STORY">
+                        ODYSSEY
+                    </button>
+                    <button class="lb-mode-btn px-2 sm:px-3 py-1 text-[7px] sm:text-[9px] font-press-start border border-white/40 bg-black text-white hover:border-white cursor-pointer" data-mode="BOSS_RUSH">
+                        SURVIVAL
+                    </button>
+                </div>
+
+                <!-- Scores Table -->
+                <div class="bg-white/5 border border-white/20 rounded p-2 sm:p-3 overflow-y-auto max-h-[45dvh]">
+                    <div class="grid grid-cols-12 text-[7px] sm:text-[9px] text-gray-400 border-b border-white/20 pb-1 mb-1.5 tracking-wider">
+                        <div class="col-span-2 text-center">RANK</div>
+                        <div class="col-span-5">PILOT</div>
+                        <div class="col-span-2 text-center">ZONE</div>
+                        <div class="col-span-3 text-right">SCORE</div>
+                    </div>
+                    
+                    <div id="leaderboard-list" class="space-y-1 text-[8px] sm:text-[10px]">
+                        <!-- Rendered by LeaderboardManager -->
+                        <div class="py-4 text-center text-gray-400 animate-pulse text-[8px]">SCANNING HYPERSPACE RECORDS...</div>
+                    </div>
+                </div>
+
+                <!-- User Pilot Status Row -->
+                <div class="flex items-center justify-between bg-black/60 border border-white/40 p-2 rounded text-[8px] sm:text-[9px]">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs">🧑‍🚀</span>
+                        <span id="lb-user-name" class="text-cyan-400 font-bold">PILOT-777</span>
+                        <span id="lb-user-status" class="text-gray-400 text-[7px]">(GUEST)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="lb-btn-google-login" class="px-2 py-1 bg-white text-black hover:bg-gray-200 transition-all text-[7px] sm:text-[8px] rounded font-bold cursor-pointer">
+                            G SIGN IN
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-auto pt-3 flex justify-center">
+                <button id="btn-close-leaderboard"
+                    class="mode-btn font-press-start bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase px-6 py-2 text-[9px] sm:text-xs">
+                    RETURN TO BASE
+                </button>
+            </div>
+        </div>
+
         <!-- Mission Intel / About Modal -->
         <div id="about-modal"
             class="hidden about-overlay absolute top-0 left-0 w-full h-full bg-black/95 z-[60] text-white p-3 sm:p-6 md:p-8 box-border overflow-y-auto flex flex-col">
@@ -242,13 +340,17 @@
                 <p id="game-over-coins" class="text-[9px] sm:text-[10px] md:text-xs text-yellow-400">COINS: 0</p>
             </div>
 
-            <div class="flex flex-col gap-2.5 mt-4 items-center w-full">
+            <div class="flex flex-col gap-2 mt-4 items-center w-full">
                 <button id="btn-relaunch"
-                    class="mode-btn font-press-start text-[10px] sm:text-xs px-6 py-3 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[240px] cursor-pointer">
+                    class="mode-btn font-press-start text-[10px] sm:text-xs px-6 py-2.5 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[240px] cursor-pointer">
                     RELAUNCH
                 </button>
+                <button id="btn-game-over-leaderboard"
+                    class="mode-btn font-press-start text-[9px] sm:text-[10px] px-5 py-2 bg-black text-yellow-400 border border-yellow-400/80 hover:bg-yellow-400 hover:text-black transition-all uppercase w-full max-w-[220px] cursor-pointer">
+                    🏆 LEADERBOARD
+                </button>
                 <button id="btn-return-menu"
-                    class="mode-btn font-press-start text-[9px] sm:text-[10px] px-5 py-2.5 bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[200px] cursor-pointer">
+                    class="mode-btn font-press-start text-[9px] sm:text-[10px] px-5 py-2 bg-black text-white border border-white hover:bg-white hover:text-black transition-all uppercase w-full max-w-[200px] cursor-pointer">
                     RETURN TO BASE
                 </button>
             </div>

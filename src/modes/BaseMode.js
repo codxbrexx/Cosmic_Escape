@@ -3,6 +3,7 @@ import { Star } from '../entities/Star.js';
 import { Particle } from '../entities/Particle.js';
 import { FloatingText } from '../entities/FloatingText.js';
 import { ScoreManager } from '../utils/ScoreManager.js';
+import { LeaderboardManager } from '../utils/LeaderboardManager.js';
 import { sounds } from '../utils/SoundManager.js';
 import {
     CANVAS_WIDTH, CANVAS_HEIGHT, GAME_SPEED_START, COLOR_ASTEROID, COLOR_COIN
@@ -23,6 +24,8 @@ export class BaseMode {
         this.coinsCollected = 0;
         this.invulnerableTimer = 0;
         this.screenShake = 0;
+        this.startTime = Date.now();
+        this.deathCause = 'hazard';
 
         this.ship = new Ship();
         this.obstacles = [];
@@ -95,7 +98,8 @@ export class BaseMode {
         this.createExplosion(c.x + c.width / 2, c.y + c.height / 2, COLOR_COIN, 8);
     }
 
-    loseLife() {
+    loseLife(cause = 'hazard') {
+        this.deathCause = cause;
         this.lives--;
         this.invulnerableTimer = 60;
         this.screenShake = 12;
@@ -110,6 +114,16 @@ export class BaseMode {
     endGame() {
         sounds.playGameOver();
         ScoreManager.saveHighScore(this.modeKey, this.score);
+        
+        const flightDurationSec = Math.floor((Date.now() - (this.startTime || Date.now())) / 1000);
+        const sectorOrWave = this.level || 1;
+
+        LeaderboardManager.submitScore(this.modeKey, this.score, this.coinsCollected, {
+            flightDurationSec,
+            sectorOrWave,
+            deathCause: this.deathCause || 'hazard'
+        });
+
         this.onGameOver({
             score: Math.floor(this.score),
             highScore: this.highScore,
