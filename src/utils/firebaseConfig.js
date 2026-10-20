@@ -9,7 +9,8 @@ const firebaseConfig = {
     projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
     storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
     messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || ""
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || ""
 };
 
 // Check if valid Firebase credentials are provided
@@ -23,6 +24,7 @@ let app = null;
 let auth = null;
 let db = null;
 let googleProvider = null;
+let analytics = null;
 
 if (isFirebaseConfigured) {
     try {
@@ -31,6 +33,17 @@ if (isFirebaseConfigured) {
         db = getFirestore(app);
         googleProvider = new GoogleAuthProvider();
         googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+        // Optional Analytics if supported in browser environment
+        if (typeof window !== 'undefined' && firebaseConfig.measurementId) {
+            import('firebase/analytics').then(({ getAnalytics, isSupported }) => {
+                isSupported().then((supported) => {
+                    if (supported) {
+                        analytics = getAnalytics(app);
+                    }
+                }).catch(() => {});
+            }).catch(() => {});
+        }
     } catch (e) {
         console.warn('Firebase initialization error:', e);
     }
@@ -50,4 +63,4 @@ export function detectUserRegion() {
     return "GLOBAL";
 }
 
-export { app, auth, db, googleProvider };
+export { app, auth, db, googleProvider, analytics };
