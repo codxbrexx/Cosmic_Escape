@@ -121,21 +121,30 @@ service cloud.firestore {
 
 ---
 
-## 🚀 What is ACTUALLY REQUIRED for Production Launch
+## 🚀 Production Launch Checklist & Deployment Files
 
-To launch the game to the public, here are the concrete launch steps:
+All configuration files are now pre-built and included in the repository:
 
-1. **Connect Real Firebase Project**:
-   - Go to [Firebase Console](https://console.firebase.google.com/) and create a project (e.g. `cosmic-escape-game`).
-   - Enable **Authentication** -> Turn on **Google** sign-in provider.
-   - Enable **Cloud Firestore** -> Select production mode and apply the rules above.
-   - Create composite Firestore indexes (if prompted by the console for mode + score ordering).
-   - Copy Firebase config values into `.env` (refer to `.env.example`).
-2. **PWA Setup (Optional Home-Screen Installation)**:
-   - Add `manifest.json` and a service worker for offline asset caching.
-3. **Deploy to Hosting**:
-   - Can be deployed with one command to **Vercel**, **Firebase Hosting**, or **Netlify**:
-     ```bash
-     npm run build
-     # Deploy dist/ folder
-     ```
+- [x] **Firebase Firestore Security Rules**: [`firestore.rules`](file:///home/codxbrexx/projects/done/Cosmic_Escape/firestore.rules) configured and ready to deploy.
+- [x] **Firestore Composite Indexes**: [`firestore.indexes.json`](file:///home/codxbrexx/projects/done/Cosmic_Escape/firestore.indexes.json) defined for global & regional ranking queries.
+- [x] **Vercel Deployment Config**: [`vercel.json`](file:///home/codxbrexx/projects/done/Cosmic_Escape/vercel.json) with PWA service worker and immutable asset cache headers.
+- [x] **Firebase Hosting Config**: [`firebase.json`](file:///home/codxbrexx/projects/done/Cosmic_Escape/firebase.json) configured for single-page app rewrites.
+- [x] **SEO & Social Share Cards**: OpenGraph and Twitter cards embedded in [`index.html`](file:///home/codxbrexx/projects/done/Cosmic_Escape/index.html).
+- [x] **PWA Manifest & Service Worker**: [`manifest.webmanifest`](file:///home/codxbrexx/projects/done/Cosmic_Escape/public/manifest.webmanifest) and [`sw.js`](file:///home/codxbrexx/projects/done/Cosmic_Escape/public/sw.js) active.
+
+### How to Launch
+
+1. **Deploy Rules & Indexes to Firebase**:
+   ```bash
+   firebase deploy --only firestore:rules,firestore:indexes
+   ```
+2. **Deploy the Frontend to Vercel**:
+   ```bash
+   # Connect repo on vercel.com or run:
+   npx vercel --prod
+   ```
+   *Or deploy to Firebase Hosting*:
+   ```bash
+   npm run build
+   firebase deploy --only hosting
+   ```
